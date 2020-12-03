@@ -1,0 +1,19 @@
+.chief-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 50px auto;
+  width: 50%;
+}
+
+.project-list {
+  padding-top: 30px;
+}
+
+.protocol {
+  display: flex;
+}
+
+.protocol p {
+  padding-right: 10px;
+}
