@@ -7,11 +7,14 @@ import ChiefResult from "./containers/chief-result";
 import ListOfProtocols from "./containers/protocols-list";
 import Monitoring from "./containers/Monitoring";
 import NotFoundPage from "./containers/not-found";
+import Navbar from "./components/navbar"
 
 class App extends React.Component {
   render() {
     return (
-      <Router>
+      <>      
+      <Navbar/>
+      <Router>           
         <Switch>
           <Route path="/" exact component={Login} />
           <Route path="/projectconf" component={ChiefOfProject} />
@@ -22,6 +25,7 @@ class App extends React.Component {
           <Route path="/*" component={NotFoundPage} />
         </Switch>
       </Router>
+      </>
     );
   }
 }
