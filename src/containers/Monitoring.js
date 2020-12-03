@@ -24,7 +24,7 @@ export default function Monitoring() {
   return (
     <>
     <div className="project-list">
-      <div class="header">
+      <div className="header">
         <h3>Listado de proyectos</h3>
         
       </div>

@@ -36,7 +36,7 @@ const ProtocolsList = (props) => {
   }, []);
 
   return (
-    <div class="protocol-list">
+    <div className="protocol-list">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Protocolo</Modal.Title>
@@ -54,7 +54,7 @@ const ProtocolsList = (props) => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div class="header">
+      <div className="header">
         <h3>Listado de protocolos del proyecto</h3>
         <Button variant="success" onClick={handleShow}>
           + Agregar Protocolo
@@ -77,7 +77,7 @@ const ProtocolsList = (props) => {
             ))}
         </tbody>
       </Table>
-      <div class="goBack">
+      <div className="goBack">
         <Button variant="link" onClick={goBack}>
           Volver a los proyectos
         </Button>
