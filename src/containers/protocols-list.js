@@ -5,7 +5,6 @@ import getAll from "../service/obtain-protocols";
 
 import Protocol from "./protocol";
 
-// Datos para testear la tabla hay que borrarlos cuando consumamos de bonita
 
 const ProtocolsList = (props) => {
   const [show, setShow] = useState(false);
@@ -69,14 +68,13 @@ const ProtocolsList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {protocols.length > 0 && protocols.map(
-            protocol => (
+          {protocols.length > 0 &&
+            protocols.map((protocol) => (
               <tr>
                 <td>{protocol.id}</td>
                 <td>{protocol.name}</td>
               </tr>
-            )
-          )}  
+            ))}
         </tbody>
       </Table>
       <div class="goBack">

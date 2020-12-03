@@ -11,7 +11,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [hasToken, setHasToken] = useState(false);
   const [jobTitle, setJobTitle] = useState("");
-  const [error, setError] = useState("");
+  const [error, showError] = useState(false);
   const history = useHistory();
 
   const validateForm = () => {
@@ -35,15 +35,13 @@ export default function Login() {
       //Una vez que sepamos como recuperar los roles
       //podemos derivar a la vista de jefe o responsable
       if (data.currentUser[0].job_title === "Jefe de Proyecto") {
-        console.log(jobTitle);
         history.push("/projectconf");
       }
       if (data.currentUser[0].job_title === "Responsable de protocolo") {
-        console.log(jobTitle);
         history.push("/protocolexec");
       }
     } else {
-      setError("Usuario y/o contraseña incorrectos");
+      showError(true);
     }
   };
 
@@ -79,7 +77,7 @@ export default function Login() {
               Login
             </Button>
           </div>
-          {error && <p>{error}</p>}
+          {error && <div class="error">Usuario y/o contraseña incorrectos</div>}
         </Form>
       </div>
     </>
