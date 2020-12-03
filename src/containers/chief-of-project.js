@@ -8,6 +8,7 @@ import "./Chief.css";
 
 export default function ChiefOfProject() {
   const [id, setId] = useState(null);
+  const [uid, setUid] = useState(null);
   const [name, setName] = useState(""); 
   const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -25,11 +26,13 @@ export default function ChiefOfProject() {
 
   useEffect(() => {
     getProjects();
+    setUid(localStorage.getItem("userId"))
+    console.log(uid)
   }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    createProject(name, endDate);
+    createProject(name, endDate, uid);
 
     /*if (data && data.response) {
       setId(data.response)
@@ -39,9 +42,8 @@ export default function ChiefOfProject() {
     */
   };
 
-  const handleShowProtocols = async (event) => {
-    console.log("#1", event)
-    history.push(`/projects/${id}/protocols`);
+  const handleShowProtocols = async () => {
+    
   };
 
   const handleStartProject = async (event) => {
@@ -89,13 +91,17 @@ export default function ChiefOfProject() {
                     <tr>
                       <td>{project.id}</td>
                       <td>{project.name}</td>
-                      <td> <Button
+                      <td> 
+                        <Button
                       variant="dark"
                       size="sm"
-                      onClick={handleShowProtocols}
-                    >
+                      //onClick={handleShowProtocols}
+                      onClick={() => { handleShowProtocols(); history.push(`/projects/${project.id}/protocols`); }
+                      }        
+                      >
                       Ver Protocolos
-                    </Button></td>
+                    </Button>
+                    </td>
                     <td> 
                     <Button
                       variant="danger"
