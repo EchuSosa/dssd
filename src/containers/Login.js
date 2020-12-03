@@ -77,7 +77,7 @@ export default function Login() {
               Login
             </Button>
           </div>
-          {error && <div class="error">Usuario y/o contraseña incorrectos</div>}
+          {error && <div className="error">Usuario y/o contraseña incorrectos</div>}
         </Form>
       </div>
     </>

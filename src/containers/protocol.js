@@ -21,7 +21,6 @@ export default function Protocol({ id, protocols, setProtocols }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-<<<<<<< HEAD
     const { data } = await createProtocol(name, id, responsible, order);
     if (data && data.response) {
       console.log(data);
@@ -30,7 +29,6 @@ export default function Protocol({ id, protocols, setProtocols }) {
       console.log("Error al crear un proyecto");
     }
     
-=======
     //TODO
     //Recuperemos los protocolos desde la bd, crear un servicio para que le pegue al back
     //remover el setProsetProtocolsjects de esta linea una vez que recuperemos los datos desde la bd
@@ -38,7 +36,6 @@ export default function Protocol({ id, protocols, setProtocols }) {
       ...protocols,
       { nombre: name, responsable: responsible },
     ]);
->>>>>>> 212249b1c6c67dda5c2347bc9eef8bbef7917236
   };
 
   /*
@@ -63,7 +60,7 @@ export default function Protocol({ id, protocols, setProtocols }) {
 */
 
   return (
-    <div class="protocol-body">
+    <div className="protocol-body">
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="projectId">
           <Form.Label>Identificador del proyecto:{id}</Form.Label>

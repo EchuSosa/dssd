@@ -42,7 +42,7 @@ const ResponsibleOfProtocol = (props) => {
 */
 
   return (
-    <div class="protocol-list">
+    <div className="protocol-list">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Iniciar Protocolo</Modal.Title>

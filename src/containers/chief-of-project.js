@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Form, Button, Card, Col, Row } from "react-bootstrap";
+import { Form, Button, Card, Col, Row,Table, Modal } from "react-bootstrap";
 
 import createProject from "../service/create-project";
+import getAll from "../service/monitoring-service";
 import "./Chief.css";
 
 export default function ChiefOfProject() {
-  const [id, setId] = useState(1);
-  const [name, setName] = useState("");
+  const [id, setId] = useState(null);
+  const [name, setName] = useState(""); 
   const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
   const history = useHistory();
@@ -16,59 +17,39 @@ export default function ChiefOfProject() {
     return name.length > 0 && endDate;
   };
 
+  const getProjects = async () => {
+
+    const { data } = await getAll();
+    setProjects(data.projects)
+  }
+
+  useEffect(() => {
+    getProjects();
+  }, []);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    //TODO
-    //Recuperemos los proyectos desde la bd
-    //remover el setProjects de esta linea una vez que recuperemos los datos desde la bd
-    setProjects((projects) => [...projects, name]);
+    createProject(name, endDate);
 
-    const { data } = await createProject(name, endDate);
-    if (data && data.response) {
-      setId(data.response);
-      //TODO
-      //Ver respuesta y actualizar el listado de proyectos con el nuevo proyecto
+    /*if (data && data.response) {
+      setId(data.response)
     } else {
       console.log("Error al crear un proyecto");
     }
+    */
   };
 
-<<<<<<< HEAD
   const handleShowProtocols = async (event) => {
+    console.log("#1", event)
     history.push(`/projects/${id}/protocols`);
-=======
-  const handleShowProtocols = async () => {
-    history.push(`/protocols/${id}`);
->>>>>>> 212249b1c6c67dda5c2347bc9eef8bbef7917236
   };
 
-  const handleStartProject = async () => {
-    //TODO
-    //Pegarle al back para actualizar la fecha de startDate del proyecto
-    //Cambiar el estado de la tarea de bonita para que quede finalizada,
-    //Luego de esto se tiene que ver las tareas que le siguen
+  const handleStartProject = async (event) => {
+    console.log("Agregar logica de iniciar un proyecto");
   };
-
-  /*
-  //TODO
-  Descomentar esto cuando se pueda pegar al back para devolver los proyectos creados
-  const fetchData = async () => {
-    try {
-      const response = await getAllProjects();
-      setProjects(response);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-*/
 
   return (
-    <>
-    <div class="chief-body">
+    <div className="chief-body">
       <Form onSubmit={handleSubmit}>
         <h3>Crear un nuevo Proyecto</h3>
         <Form.Group controlId="name">
@@ -92,31 +73,30 @@ export default function ChiefOfProject() {
           Guardar
         </Button>
       </Form>
-      <div class="project-list">
-        <Card>
-          <Card.Header>Proyectos</Card.Header>
-          {projects.length === 0 && (
-            <Card.Body>
-              <Card.Title>No hay proyectos creados</Card.Title>
-            </Card.Body>
-          )}
-          {projects.length > 0 &&
-            projects.map((project) => (
-              <Card.Body>
-                <Row>
-                  <Col xs={8}>
-                    <Card.Title>Nombre: {project}</Card.Title>
-                  </Col>
-                  <Col xs={2}>
-                    <Button
+      <div className="project-list p-1">
+      <Table striped bordered hover size="lg">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Acción</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.length > 0 &&
+                  projects.map((project) => (
+                    <tr>
+                      <td>{project.id}</td>
+                      <td>{project.name}</td>
+                      <td> <Button
                       variant="dark"
                       size="sm"
                       onClick={handleShowProtocols}
                     >
                       Ver Protocolos
-                    </Button>
-                  </Col>
-                  <Col xs={2}>
+                    </Button></td>
+                    <td> 
                     <Button
                       variant="danger"
                       size="sm"
@@ -124,13 +104,12 @@ export default function ChiefOfProject() {
                     >
                       Iniciar Proyecto
                     </Button>
-                  </Col>
-                </Row>
-              </Card.Body>
-            ))}
-        </Card>
+                     </td> 
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
       </div>
     </div>
-    </>
   );
 }
