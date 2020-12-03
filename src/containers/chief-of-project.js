@@ -8,33 +8,58 @@ import "./Chief.css";
 export default function ChiefOfProject() {
   const [id, setId] = useState(1);
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
   const history = useHistory();
 
   const validateForm = () => {
-    return name.length > 0 && description.length > 0;
+    return name.length > 0 && endDate;
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    //TODO
+    //Recuperemos los proyectos desde la bd
+    //remover el setProjects de esta linea una vez que recuperemos los datos desde la bd
     setProjects((projects) => [...projects, name]);
-    const { data } = await createProject(name, description);
+
+    const { data } = await createProject(name, endDate);
     if (data && data.response) {
-      console.log(data);
-      setId(data.response)
+      setId(data.response);
+      //TODO
+      //Ver respuesta y actualizar el listado de proyectos con el nuevo proyecto
     } else {
       console.log("Error al crear un proyecto");
     }
   };
 
-  const handleShowProtocols = async (event) => {
+  const handleShowProtocols = async () => {
     history.push(`/protocols/${id}`);
   };
 
-  const handleStartProject = async (event) => {
-    console.log("Agregar logica de iniciar un proyecto");
+  const handleStartProject = async () => {
+    //TODO
+    //Pegarle al back para actualizar la fecha de startDate del proyecto
+    //Cambiar el estado de la tarea de bonita para que quede finalizada,
+    //Luego de esto se tiene que ver las tareas que le siguen
   };
+
+  /*
+  //TODO
+  Descomentar esto cuando se pueda pegar al back para devolver los proyectos creados
+  const fetchData = async () => {
+    try {
+      const response = await getAllProjects();
+      setProjects(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+*/
 
   return (
     <div className="chief-body">
@@ -49,11 +74,12 @@ export default function ChiefOfProject() {
             placeholder="Nombre del proyecto"
           />
         </Form.Group>
-        <Form.Group controlId="description">
-          <Form.Label>Descripción</Form.Label>
+        <Form.Group size="lg" controlId="endDate">
+          <Form.Label>Fecha de fin</Form.Label>
           <Form.Control
-            type="text"
-            onChange={(e) => setDescription(e.target.value)}
+            type="date"
+            onChange={(e) => setEndDate(e.target.value)}
+            required
           />
         </Form.Group>
         <Button variant="dark" type="submit" disabled={!validateForm()}>

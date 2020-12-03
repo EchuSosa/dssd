@@ -10,6 +10,7 @@ export default function Protocol({ id, protocols, setProtocols }) {
   const [isLocal, setIsLocal] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [users, setUsers] = useState([]);
 
   const validateForm = () => {
     return (
@@ -19,9 +20,35 @@ export default function Protocol({ id, protocols, setProtocols }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Falta la logica de crea nuevo protocolo");
-    setProtocols((protocols) => [...protocols, { nombre: name, responsable:responsible }]);
+    //TODO
+    //Recuperemos los protocolos desde la bd, crear un servicio para que le pegue al back
+    //remover el setProsetProtocolsjects de esta linea una vez que recuperemos los datos desde la bd
+    setProtocols((protocols) => [
+      ...protocols,
+      { nombre: name, responsable: responsible },
+    ]);
   };
+
+  /*
+  //TODO
+  Descomentar esto cuando se pueda pegar a bonita para mostrar solo los usuarios creados
+  Modificar en el form el input para que se cargue con los usuarios de bonita
+  Crear los servicios getAllUsers y getAllProtocols si no estan creados
+  const fetchData = async () => {
+    try {
+      const allUsers = await getAllUsers();
+      const allProtocols = await getAllProtocols();
+      setUsers(allUsers);
+      setProtocols(allProtocols);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+*/
 
   return (
     <div class="protocol-body">
@@ -37,12 +64,12 @@ export default function Protocol({ id, protocols, setProtocols }) {
             onChange={(e) => setName(e.target.value)}
           />
         </Form.Group>
-        <Form.Group size="lg" controlId="responsible">
-          <Form.Label>Responsable de Protocolo</Form.Label>
-          <Form.Control
-            type="text"
-            onChange={(e) => setResponsible(e.target.value)}
-          />
+        <Form.Group controlId="formGridState">
+          <Form.Label>Responsable</Form.Label>
+          <Form.Control as="select" defaultValue="Seleccionar...">
+            <option>Camila Faraone</option>
+            <option>Echu Sosa</option>
+          </Form.Control>
         </Form.Group>
         <Row>
           <Col>

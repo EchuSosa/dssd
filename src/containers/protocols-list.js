@@ -4,8 +4,8 @@ import { useHistory } from "react-router-dom";
 
 import Protocol from "./protocol";
 
-// Datos para testear la tabla hay que borrarlos cuando consumamos de bonita
-const dataTest = { id: "1", nombre: "Protocolo Test", responsable:"Camila" }
+// Datos para testear la tabla hay que borrarlos cuando consumamos de la bd
+const dataTest = { id: "1", nombre: "Protocolo Test", responsable: "Camila" };
 
 const ProtocolsList = (props) => {
   const [show, setShow] = useState(false);
@@ -24,6 +24,24 @@ const ProtocolsList = (props) => {
   const goBack = () => {
     history.push("/projectconf");
   };
+
+  /*
+  //TODO
+  Descomentar esto cuando se pueda pegar al back para recuperar los protocolos
+  Tiene que estar creado el servicio getAllProtocols que le pegue al back si no esta creado
+  const fetchData = async () => {
+    try {
+      const allProtocols = await getAllProtocols();
+      setProtocols(allProtocols);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+*/
 
   return (
     <div class="protocol-list">
@@ -59,15 +77,14 @@ const ProtocolsList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {protocols.length > 0 && protocols.map(
-            protocol => (
+          {protocols.length > 0 &&
+            protocols.map((protocol) => (
               <tr>
                 <td>{protocol.id}</td>
                 <td>{protocol.nombre}</td>
                 <td>{protocol.responsable}</td>
               </tr>
-            )
-          )}  
+            ))}
         </tbody>
       </Table>
       <div class="goBack">

@@ -7,4 +7,10 @@
     margin: 0 auto;
     max-width: 320px;
   }
+
+  .error {
+    padding-top: 10px;
+    background-color: rgb(255, 249, 242);
+    color: rgb(211, 0, 0);
+  }
 }
