@@ -1,0 +1,17 @@
+.project-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 50px auto;
+  width: 50%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 30px;
+}
+
+.goBack {
+  text-align: right;
+}

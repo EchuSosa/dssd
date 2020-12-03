@@ -29,7 +29,7 @@ export default function ChiefOfProject() {
   };
 
   const handleShowProtocols = async (event) => {
-    history.push(`/protocols/${id}`);
+    history.push(`/projects/${id}/protocols`);
   };
 
   const handleStartProject = async (event) => {
@@ -37,7 +37,8 @@ export default function ChiefOfProject() {
   };
 
   return (
-    <div className="chief-body">
+    <>
+    <div class="chief-body">
       <Form onSubmit={handleSubmit}>
         <h3>Crear un nuevo Proyecto</h3>
         <Form.Group controlId="name">
@@ -99,5 +100,6 @@ export default function ChiefOfProject() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

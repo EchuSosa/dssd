@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
+import createProtocol from "../service/create-protocol";
 
 import "./Protocol.css";
 
@@ -7,7 +8,7 @@ export default function Protocol({ id, protocols, setProtocols }) {
   const [name, setName] = useState("");
   const [responsible, setResponsible] = useState("");
   const [order, setOrder] = useState(0);
-  const [isLocal, setIsLocal] = useState(false);
+  const [isLocal, setIsLocal] = useState(1);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -19,8 +20,14 @@ export default function Protocol({ id, protocols, setProtocols }) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Falta la logica de crea nuevo protocolo");
-    setProtocols((protocols) => [...protocols, { nombre: name, responsable:responsible }]);
+    const { data } = await createProtocol(name, id, responsible, order);
+    if (data && data.response) {
+      console.log(data);
+      setProtocols((protocols) => [...protocols, { nombre: name, responsable:responsible }]);
+    } else {
+      console.log("Error al crear un proyecto");
+    }
+    
   };
 
   return (

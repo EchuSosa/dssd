@@ -5,6 +5,7 @@ import ChiefOfProject from "./containers/chief-of-project";
 import ResponsibleOfProtocol from "./containers/responsible-of-protocol";
 import ChiefResult from "./containers/chief-result";
 import ListOfProtocols from "./containers/protocols-list";
+import Monitoring from "./containers/Monitoring";
 
 class App extends React.Component {
   render() {
@@ -14,8 +15,9 @@ class App extends React.Component {
           <Route path="/login" component={Login} />
           <Route path="/projectconf" component={ChiefOfProject} />
           <Route path="/protocolexec" component={ResponsibleOfProtocol} />
+          <Route path="/projects/monitoring" component={Monitoring} />
           <Route path="/result" component={ChiefResult} />
-          <Route path="/protocols/:id" component={ListOfProtocols} />
+          <Route path="/projects/:id/protocols" component={ListOfProtocols} />
         </Switch>
       </Router>
     );

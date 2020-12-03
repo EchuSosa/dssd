@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import getAll from "../service/obtain-protocols";
 
 import Protocol from "./protocol";
 
 // Datos para testear la tabla hay que borrarlos cuando consumamos de bonita
-const dataTest = { id: "1", nombre: "Protocolo Test", responsable:"Camila" }
 
 const ProtocolsList = (props) => {
   const [show, setShow] = useState(false);
-  const [protocols, setProtocols] = useState([dataTest]);
+  const [protocols, setProtocols] = useState([]);
 
   const history = useHistory();
 
@@ -24,6 +24,17 @@ const ProtocolsList = (props) => {
   const goBack = () => {
     history.push("/projectconf");
   };
+
+  const getProtocols = async () => {
+
+    const { data } = await getAll(props.match.params.id);
+    console.log(data)
+    setProtocols(data.protocol)
+  }
+
+  useEffect(() => {
+    getProtocols();
+  }, []);
 
   return (
     <div class="protocol-list">
@@ -55,7 +66,6 @@ const ProtocolsList = (props) => {
           <tr>
             <th>Id</th>
             <th>Nombre</th>
-            <th>Responsable</th>
           </tr>
         </thead>
         <tbody>
@@ -63,8 +73,7 @@ const ProtocolsList = (props) => {
             protocol => (
               <tr>
                 <td>{protocol.id}</td>
-                <td>{protocol.nombre}</td>
-                <td>{protocol.responsable}</td>
+                <td>{protocol.name}</td>
               </tr>
             )
           )}  
