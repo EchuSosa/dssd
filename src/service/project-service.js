@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const getAllProject = async (name, endDate) => {
+export const getAll= async (id) => {
   const response = await axios
-    .get("http://localhost:5000/getAllProjectWithOutAuth")
+    .get(`http://localhost:5000/getActiveCases/${id}`)
     .then((response) => {
       return response;
     })
@@ -12,4 +12,4 @@ export const getAllProject = async (name, endDate) => {
   return response;
 };
 
-export default getAllProject;
+export default getAll;

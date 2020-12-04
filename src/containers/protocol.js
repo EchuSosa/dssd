@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import createProtocol from "../service/create-protocol";
 
 import "./Protocol.css";
 
-export default function Protocol({ id, protocols, setProtocols }) {
+export default function Protocol({ id, protocols, setProtocols, showModal }) {
+
   const [name, setName] = useState("");
   const [responsible, setResponsible] = useState("");
   const [order, setOrder] = useState(0);
@@ -18,46 +19,21 @@ export default function Protocol({ id, protocols, setProtocols }) {
       name.length > 0 && order.length > 0 && startDate && endDate && responsible
     );
   };
+  
+ 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { data } = await createProtocol(name, id, responsible, order);
-    if (data && data.response) {
-      console.log(data);
+    const data  = await createProtocol(name, id, responsible, order);
+    console.log(data);
+    if (data) {      
       setProtocols((protocols) => [...protocols, { nombre: name, responsable:responsible }]);
+      showModal(false)
+
     } else {
       console.log("Error al crear un proyecto");
     }
-    
-    //TODO
-    //Recuperemos los protocolos desde la bd, crear un servicio para que le pegue al back
-    //remover el setProsetProtocolsjects de esta linea una vez que recuperemos los datos desde la bd
-    setProtocols((protocols) => [
-      ...protocols,
-      { nombre: name, responsable: responsible },
-    ]);
-  };
-
-  /*
-  //TODO
-  Descomentar esto cuando se pueda pegar a bonita para mostrar solo los usuarios creados
-  Modificar en el form el input para que se cargue con los usuarios de bonita
-  Crear los servicios getAllUsers y getAllProtocols si no estan creados
-  const fetchData = async () => {
-    try {
-      const allUsers = await getAllUsers();
-      const allProtocols = await getAllProtocols();
-      setUsers(allUsers);
-      setProtocols(allProtocols);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-*/
+  }
 
   return (
     <div className="protocol-body">
@@ -75,9 +51,10 @@ export default function Protocol({ id, protocols, setProtocols }) {
         </Form.Group>
         <Form.Group controlId="formGridState">
           <Form.Label>Responsable</Form.Label>
-          <Form.Control as="select" defaultValue="Seleccionar...">
-            <option>Camila Faraone</option>
-            <option>Echu Sosa</option>
+          <Form.Control as="select" defaultValue="Seleccionar..."  onChange={(e) => setResponsible(e.target.value)} >
+            <option value="c.faraone">Camila Faraone</option>
+            <option value="e.sosa">Echu Sosa</option>
+            <option value="f.bellino">Franco Bellino</option>
           </Form.Control>
         </Form.Group>
         <Row>
