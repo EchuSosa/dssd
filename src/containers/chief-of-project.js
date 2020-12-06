@@ -3,12 +3,12 @@ import { useHistory } from "react-router-dom";
 import { Form, Button, Card, Col, Row,Table, Modal } from "react-bootstrap";
 
 import createProject from "../service/create-project";
-import getAll from "../service/monitoring-service";
+import getAll from "../service/project-service";
 import "./Chief.css";
 
 export default function ChiefOfProject() {
   const [id, setId] = useState(null);
-  const [uid, setUid] = useState(null);
+  const [uid, setUid] = useState("");
   const [name, setName] = useState(""); 
   const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
@@ -19,27 +19,23 @@ export default function ChiefOfProject() {
   };
 
   const getProjects = async () => {
-
-    const { data } = await getAll();
-    setProjects(data.projects)
+    setUid(localStorage.getItem("userId"))
+    const { data } = await getAll(localStorage.getItem("userId"));
+    console.log(data.response)
+    if (data){
+      setProjects(data.response)
+    } 
+    
   }
 
   useEffect(() => {
     getProjects();
-    setUid(localStorage.getItem("userId"))
-    console.log(uid)
   }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     createProject(name, endDate, uid);
 
-    /*if (data && data.response) {
-      setId(data.response)
-    } else {
-      console.log("Error al crear un proyecto");
-    }
-    */
   };
 
   const handleShowProtocols = async () => {
@@ -48,6 +44,7 @@ export default function ChiefOfProject() {
 
   const handleStartProject = async (event) => {
     console.log("Agregar logica de iniciar un proyecto");
+    
   };
 
   return (
@@ -80,7 +77,7 @@ export default function ChiefOfProject() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Nombre</th>
+                  <th>Estado</th>
                   <th>Acción</th>
                   <th>Acción</th>
                 </tr>
@@ -90,7 +87,7 @@ export default function ChiefOfProject() {
                   projects.map((project) => (
                     <tr>
                       <td>{project.id}</td>
-                      <td>{project.name}</td>
+                      <td>{project.state}</td>
                       <td> 
                         <Button
                       variant="dark"

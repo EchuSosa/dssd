@@ -40,6 +40,9 @@ export default function Login() {
       if (data.currentUser[0].job_title === "Responsable de protocolo") {
         history.push("/protocolexec");
       }
+      if (data.currentUser[0].job_title === "") {
+        showError(true)
+      }
     } else {
       showError(true);
     }
@@ -78,6 +81,7 @@ export default function Login() {
             </Button>
           </div>
           {error && <div className="error">Usuario y/o contraseña incorrectos</div>}
+          
         </Form>
       </div>
     </>

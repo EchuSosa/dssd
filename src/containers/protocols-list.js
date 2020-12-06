@@ -12,20 +12,18 @@ const ProtocolsList = (props) => {
 
   const history = useHistory();
 
-  const handleClose = () => setShow(false);
+  const handleClose = () =>  setShow(false) 
   const handleShow = () => setShow(true);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Crea nuevo protocolo");
-  };
+    console.log("Crea nuevo protocolo");  };
 
   const goBack = () => {
     history.push("/projectconf");
   };
 
   const getProtocols = async () => {
-
     const { data } = await getAll(props.match.params.id);
     console.log(data)
     setProtocols(data.protocol)
@@ -33,7 +31,8 @@ const ProtocolsList = (props) => {
 
   useEffect(() => {
     getProtocols();
-  }, []);
+
+  }, [protocols]);
 
   return (
     <div className="protocol-list">
@@ -46,6 +45,7 @@ const ProtocolsList = (props) => {
             id={props.match.params.id}
             protocols={protocols}
             setProtocols={setProtocols}
+            showModal={setShow} 
           />
         </Modal.Body>
         <Modal.Footer>
