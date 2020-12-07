@@ -7,24 +7,22 @@ import ChiefResult from "./containers/chief-result";
 import ListOfProtocols from "./containers/protocols-list";
 import Monitoring from "./containers/Monitoring";
 import NotFoundPage from "./containers/not-found";
-import Navbar from "./components/navbar"
 
 class App extends React.Component {
   render() {
     return (
-      <>      
-      <Navbar/>
-      <Router>           
-        <Switch>
-          <Route path="/" exact component={Login} />
-          <Route path="/projectconf" component={ChiefOfProject} />
-          <Route path="/protocolexec" component={ResponsibleOfProtocol} />
-          <Route path="/projects/monitoring" component={Monitoring} />
-          <Route path="/result" component={ChiefResult} />
-          <Route path="/projects/:id/protocols" component={ListOfProtocols} />
-          <Route path="/*" component={NotFoundPage} />
-        </Switch>
-      </Router>
+      <>
+        <Router>
+          <Switch>
+            <Route path="/" exact component={Login} />
+            <Route path="/projectconf" component={ChiefOfProject} />
+            <Route path="/protocolexec" component={ResponsibleOfProtocol} />
+            <Route path="/projects/monitoring" component={Monitoring} />
+            <Route path="/result" component={ChiefResult} />
+            <Route path="/projects/:id/protocols" component={ListOfProtocols} />
+            <Route path="/*" component={NotFoundPage} />
+          </Switch>
+        </Router>
       </>
     );
   }

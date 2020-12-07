@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export const getAll= async (id) => {
+const API_URL = "http://localhost:5000/";
+
+const getAll = async (id) => {
   const response = await axios
-    .get(`http://localhost:5000/getActiveCases/${id}`)
+    .get(`${API_URL}getActiveCases/${id}`)
     .then((response) => {
       return response;
     })
@@ -12,4 +14,19 @@ export const getAll= async (id) => {
   return response;
 };
 
-export default getAll;
+const getActivity = async (parentCaseId) => {
+  const response = await axios
+    .post(`${API_URL}activity`, { parentCaseId: parentCaseId })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+export default {
+  getAll,
+  getActivity,
+};

@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { useHistory } from "react-router-dom";
 
+import Navbar from "../components/navbar";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
-import appLogin from "../service/login-services";
+import AuthService from "../service/auth-service";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [hasToken, setHasToken] = useState(false);
-  const [jobTitle, setJobTitle] = useState("");
-  const [error, showError] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
   const history = useHistory();
 
   const validateForm = () => {
@@ -22,34 +22,41 @@ export default function Login() {
     localStorage.setItem("token", data.token);
     localStorage.setItem("username", data.currentUser[0].userName);
     localStorage.setItem("userId", data.currentUser[0].id);
-    localStorage.setItem("userRole", data.currentUser[0].job_title);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const { data } = await appLogin(username, password);
-    if (data) {
-      setHasToken(data.token);
-      setJobTitle(data.currentUser[0].job_title);
-      storageData(data);
-      //Una vez que sepamos como recuperar los roles
-      //podemos derivar a la vista de jefe o responsable
-      if (data.currentUser[0].job_title === "Jefe de Proyecto") {
-        history.push("/projectconf");
+    try {
+      const response = await AuthService.login(username, password);
+      if (response.status === 200 && response.data) {
+        storageData(response.data);
+        //Una vez que sepamos como recuperar los roles
+        //podemos derivar a la vista de jefe o responsable
+        if (response.data.currentUser[0].job_title === "Jefe de Proyecto") {
+          history.push("/projectconf");
+        }
+        if (
+          response.data.currentUser[0].job_title === "Responsable de protocolo"
+        ) {
+          history.push("/protocolexec");
+        }
+        if (response.data.currentUser[0].job_title === "") {
+          setError("Error");
+          setShowError(true);
+        }
+      } else {
+        setError("Usuario y/o contraseña incorrectos");
+        setShowError(true);
       }
-      if (data.currentUser[0].job_title === "Responsable de protocolo") {
-        history.push("/protocolexec");
-      }
-      if (data.currentUser[0].job_title === "") {
-        showError(true)
-      }
-    } else {
-      showError(true);
+    } catch (error) {
+      setError("Usuario y/o contraseña incorrectos");
+      setShowError(true);
     }
   };
 
   return (
     <>
+      <Navbar />
       <div className="Login">
         <Form onSubmit={handleSubmit}>
           <Form.Group size="lg" controlId="username">
@@ -80,8 +87,7 @@ export default function Login() {
               Login
             </Button>
           </div>
-          {error && <div className="error">Usuario y/o contraseña incorrectos</div>}
-          
+          {showError && <div className="error">{error}</div>}
         </Form>
       </div>
     </>

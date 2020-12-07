@@ -3,6 +3,7 @@ import { Table, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import getAll from "../service/obtain-protocols";
 
+import Navbar from "../components/navbar";
 import Protocol from "./protocol";
 
 
@@ -35,6 +36,8 @@ const ProtocolsList = (props) => {
   }, [protocols]);
 
   return (
+    <>
+    <Navbar />
     <div className="protocol-list">
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
@@ -83,6 +86,7 @@ const ProtocolsList = (props) => {
         </Button>
       </div>
     </div>
+    </>
   );
 };
 
