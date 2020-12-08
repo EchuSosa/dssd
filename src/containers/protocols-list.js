@@ -38,7 +38,7 @@ const ProtocolsList = (props) => {
           </Modal.Header>
           <Modal.Body>
             <Protocol
-              id={props.match.params.id}
+              projectId={props.match.params.id}
               protocols={protocols}
               setProtocols={setProtocols}
               showModal={setShow}

@@ -18,27 +18,31 @@ const ResponsibleOfProtocol = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    //TODO
-    //Crear un servicio para pegarle al back y actualice el estado de la tarea a completado
-    //Ver el tema del score
+    /*TODO
+    Crear un servicio para pegarle al back y actualice el estado de la tarea a completado
+    Ver el tema del score*/
   };
 
   const fetchData = async () => {
     try {
-      //TODO hay que filtrar que los protocolos que devuelva solo
-      //sean de los procesos que tenemos activos en bonita en ese momento
+      //Casos activos de bonita
+      const bonitaCases = await ProjectService.getAllActiveCases();
+      //Protocolos por usuario actual de bd
       const { data, status } = await ProtocolService.getProtocolsByUser(
         localStorage.getItem("username")
       );
-
-      //TODO recuperar los casos actuales de bonita no anda
-      const response = await ProjectService.getAllActiveCases();
-      console.log("getAllActiveCases", response);
-      if (status === 200 && data) {
-        setProtocols(data);
-      } else {
-        console.log("Error al recuperar los protocolos de un usuario");
-      }
+      //Me quedo solo con los rootCaseId activos de bonita
+      let projectsIdFromBonita = [];
+      bonitaCases.data.map((d) => {
+        if (!projectsIdFromBonita.includes(d.rootCaseId))
+          projectsIdFromBonita.push(d.rootCaseId);
+      });
+      //Filtro de los protocolos de DB que solamente esten en los casos activos de bonita
+      let filterProtocols = data.filter((element) =>
+        projectsIdFromBonita.includes(element.project_id)
+      );
+      //Seteo para mostrar en la vista solo el filtro
+      setProtocols(filterProtocols);
     } catch (error) {
       console.log(error);
     }
@@ -74,8 +78,8 @@ const ResponsibleOfProtocol = () => {
             <tr>
               <th>Id</th>
               <th>Nombre</th>
-              <th>Nombre</th>
               <th>Id Proyecto</th>
+              <th>Acción</th>
             </tr>
           </thead>
           <tbody>

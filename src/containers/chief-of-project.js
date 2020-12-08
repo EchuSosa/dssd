@@ -39,6 +39,10 @@ export default function ChiefOfProject() {
       event.preventDefault();
       const response = await ProjectService.createProject(name, endDate);
       if (response && response.status === 200 && response.data) {
+        setProjects((projects) => [...projects, response.data]);
+        handleShow();
+        setModalMessage("El proyecto ha sido creado correctamente.");
+        //TODO checkear si funciona bien, falla en el back en bonita no ejecuta
         //Una vez que está creado el proyecto podemos correr la primera tarea
         await ProjectService.startActivity(response.data.id);
       } else {
@@ -55,14 +59,18 @@ export default function ChiefOfProject() {
     const { data } = await ProjectService.getProtocolsByProject(projectId);
     if (data.protocol.length === 0) {
       setModalMessage(
-        "Para poder iniciar un proyecto, debe agregarse al menos un protocolo."
+        "Para poder iniciar un proyecto debe agregarse al menos un protocolo."
       );
       handleShow();
     } else {
-      const response = await ProjectService.startActivity(projectId);
+      /*TODO deshabilitar el botón de iniciar proyecto funciona una vez, 
+      pero si vamos a los protocolos y volvemos se vuelve a habilitar, 
+      y en ese caso se podría correr otra tarea desde ahí, habría que guardar 
+      algo en la bd para consultar si ya no fue iniciado podría ser el startDate?*/
       setDisabledButton(true);
       handleShow();
       setModalMessage("El proyecto ha sido inicializado correctamente.");
+      await ProjectService.startActivity(projectId);
     }
   };
 
@@ -78,7 +86,7 @@ export default function ChiefOfProject() {
       <Navbar />
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Iniciar Proyecto</Modal.Title>
+          <Modal.Title>Proyectos</Modal.Title>
         </Modal.Header>
         <Modal.Body>{modalMessage}</Modal.Body>
         <Modal.Footer>

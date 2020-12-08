@@ -4,7 +4,12 @@ import ProtocolService from "../service/protocol-service";
 
 import "./Protocol.css";
 
-export default function Protocol({ id, protocols, setProtocols, showModal }) {
+export default function Protocol({
+  projectId,
+  protocols,
+  setProtocols,
+  showModal,
+}) {
   const [name, setName] = useState("");
   const [responsible, setResponsible] = useState("");
   const [order, setOrder] = useState(0);
@@ -27,7 +32,7 @@ export default function Protocol({ id, protocols, setProtocols, showModal }) {
       local,
       startDate,
       endDate,
-      id
+      projectId
     );
     if (response && response.data && response.status === 201) {
       setProtocols((protocols) => [...protocols, response.data.protocol]);
@@ -41,7 +46,7 @@ export default function Protocol({ id, protocols, setProtocols, showModal }) {
     <div className="protocol-body">
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="projectId">
-          <Form.Label>Identificador del proyecto:{id}</Form.Label>
+          <Form.Label>Identificador del proyecto:{projectId}</Form.Label>
         </Form.Group>
         <Form.Group size="lg" controlId="name">
           <Form.Label>Nombre del Protocolo</Form.Label>
