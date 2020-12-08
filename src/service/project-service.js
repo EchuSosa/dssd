@@ -1,10 +1,11 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/";
+const API_URL = "http://localhost:5000";
+const BONITA_URL = "http://localhost:8080/bonita";
 
 const getAll = async (id) => {
   const response = await axios
-    .get(`${API_URL}getActiveCases/${id}`)
+    .get(`${API_URL}/getActiveCases/${id}`)
     .then((response) => {
       return response;
     })
@@ -14,9 +15,60 @@ const getAll = async (id) => {
   return response;
 };
 
-const getActivity = async (parentCaseId) => {
+const getProjectsByUserId = async (id) => {
   const response = await axios
-    .post(`${API_URL}activity`, { parentCaseId: parentCaseId })
+    .get(`${API_URL}/projects/user/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const startActivity = async (parentCaseId) => {
+  const response = await axios
+    .post(`${API_URL}/startActivity`, { parentCaseId: parentCaseId })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const createProject = async (name, endDate) => {
+  const response = await axios
+    .post(`${API_URL}/createNewProject`, {
+      name: name,
+      endDate: endDate,
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getProtocolsByProject = async (idProject) => {
+  const response = await axios
+    .get(`${API_URL}/protocols/project/${idProject}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getAllActiveCases = async () => {
+  const response = await axios
+    .get(`${API_URL}/getAllActiveCases`)
     .then((response) => {
       return response;
     })
@@ -28,5 +80,9 @@ const getActivity = async (parentCaseId) => {
 
 export default {
   getAll,
-  getActivity,
+  startActivity,
+  getProjectsByUserId,
+  createProject,
+  getProtocolsByProject,
+  getAllActiveCases,
 };

@@ -1,39 +1,41 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
-import createProtocol from "../service/create-protocol";
+import ProtocolService from "../service/protocol-service";
 
 import "./Protocol.css";
 
 export default function Protocol({ id, protocols, setProtocols, showModal }) {
-
   const [name, setName] = useState("");
   const [responsible, setResponsible] = useState("");
   const [order, setOrder] = useState(0);
-  const [isLocal, setIsLocal] = useState(1);
+  const [isLocal, setIsLocal] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [users, setUsers] = useState([]);
 
   const validateForm = () => {
     return (
       name.length > 0 && order.length > 0 && startDate && endDate && responsible
     );
   };
-  
- 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const data  = await createProtocol(name, id, responsible, order);
-    console.log(data);
-    if (data) {      
-      setProtocols((protocols) => [...protocols, { nombre: name, responsable:responsible }]);
-      showModal(false)
-
+    const local = isLocal ? 1 : 0;
+    const response = await ProtocolService.createProtocol(
+      name,
+      responsible,
+      order,
+      local,
+      startDate,
+      endDate,
+      id
+    );
+    if (response && response.data && response.status === 201) {
+      setProtocols((protocols) => [...protocols, response.data.protocol]);
+      showModal(false);
     } else {
       console.log("Error al crear un proyecto");
     }
-  }
+  };
 
   return (
     <div className="protocol-body">
@@ -51,7 +53,12 @@ export default function Protocol({ id, protocols, setProtocols, showModal }) {
         </Form.Group>
         <Form.Group controlId="formGridState">
           <Form.Label>Responsable</Form.Label>
-          <Form.Control as="select" defaultValue="Seleccionar..."  onChange={(e) => setResponsible(e.target.value)} >
+          <Form.Control
+            as="select"
+            onChange={(e) => setResponsible(e.target.value)}
+            defaultValue="Seleccionar..."
+          >
+            <option disabled>Seleccionar...</option>
             <option value="c.faraone">Camila Faraone</option>
             <option value="e.sosa">Echu Sosa</option>
             <option value="f.bellino">Franco Bellino</option>

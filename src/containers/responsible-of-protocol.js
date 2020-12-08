@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 
 import Navbar from "../components/navbar";
 import "./Protocol.css";
+import ProtocolService from "../service/protocol-service";
+import ProjectService from "../service/project-service";
 
-// Datos para testear la tabla hay que borrarlos cuando consumamos de la bd
-const dataTest = { id: "1", nombre: "Protocolo Test" };
-
-const ResponsibleOfProtocol = (props) => {
+const ResponsibleOfProtocol = () => {
   const [show, setShow] = useState(false);
-  const [protocols, setProtocols] = useState([dataTest]);
+  const [protocols, setProtocols] = useState([]);
   const history = useHistory();
 
   // Modal
@@ -24,14 +23,20 @@ const ResponsibleOfProtocol = (props) => {
     //Ver el tema del score
   };
 
-  /*
-  //TODO
-  Descomentar esto cuando se pueda pegar al back para recuperar los protocolos
-  Tiene que estar creado el servicio getAllProtocols que se corresponde al usuario actual
   const fetchData = async () => {
     try {
-      const allUserProtocols = await allUserProtocols();
-      setProtocols(allUserProtocols);
+      //TODO hay que filtrar que los protocolos que devuelva solo
+      //sean de los procesos que tenemos activos en bonita en ese momento
+      const { data, status } = await ProtocolService.getProtocolsByUser(
+        localStorage.getItem("username")
+      );
+      const response = await ProjectService.getAllActiveCases();
+      console.log("getAllActiveCases", response);
+      if (status === 200 && data) {
+        setProtocols(data);
+      } else {
+        console.log("Error al recuperar los protocolos de un usuario");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -40,7 +45,6 @@ const ResponsibleOfProtocol = (props) => {
   useEffect(() => {
     fetchData();
   }, []);
-*/
 
   return (
     <>
@@ -68,7 +72,8 @@ const ResponsibleOfProtocol = (props) => {
             <tr>
               <th>Id</th>
               <th>Nombre</th>
-              <th></th>
+              <th>Nombre</th>
+              <th>Id Proyecto</th>
             </tr>
           </thead>
           <tbody>
@@ -76,7 +81,8 @@ const ResponsibleOfProtocol = (props) => {
               protocols.map((protocol) => (
                 <tr>
                   <td>{protocol.id}</td>
-                  <td>{protocol.nombre}</td>
+                  <td>{protocol.name}</td>
+                  <td>{protocol.project_id}</td>
                   <td>
                     <Button variant="danger" onClick={handleShow}>
                       Ejecutar
