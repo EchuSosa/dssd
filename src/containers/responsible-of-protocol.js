@@ -30,6 +30,8 @@ const ResponsibleOfProtocol = () => {
       const { data, status } = await ProtocolService.getProtocolsByUser(
         localStorage.getItem("username")
       );
+
+      //TODO recuperar los casos actuales de bonita no anda
       const response = await ProjectService.getAllActiveCases();
       console.log("getAllActiveCases", response);
       if (status === 200 && data) {
