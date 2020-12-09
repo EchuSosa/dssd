@@ -6,6 +6,8 @@ import ResponsibleOfProtocol from "./containers/responsible-of-protocol";
 import ChiefResult from "./containers/chief-result";
 import ListOfProtocols from "./containers/protocols-list";
 import Monitoring from "./containers/Monitoring";
+import Users from "./containers/users-list";
+
 import NotFoundPage from "./containers/not-found";
 
 class App extends React.Component {
@@ -15,6 +17,7 @@ class App extends React.Component {
         <Router>
           <Switch>
             <Route path="/" exact component={Login} />
+            <Route path="/users" component={Users} />
             <Route path="/projectconf" component={ChiefOfProject} />
             <Route path="/protocolexec" component={ResponsibleOfProtocol} />
             <Route path="/projects/monitoring" component={Monitoring} />

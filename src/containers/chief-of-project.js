@@ -67,7 +67,7 @@ export default function ChiefOfProject() {
       pero si vamos a los protocolos y volvemos se vuelve a habilitar, 
       y en ese caso se podría correr otra tarea desde ahí, habría que guardar 
       algo en la bd para consultar si ya no fue iniciado podría ser el startDate?*/
-      setDisabledButton(true);
+      setDisabledButton(true);//arreglar porque diseablea todo
       handleShow();
       setModalMessage("El proyecto ha sido inicializado correctamente.");
       await ProjectService.startActivity(projectId);
