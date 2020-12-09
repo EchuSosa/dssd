@@ -22,8 +22,10 @@ export default function Protocol({
       name.length > 0 && order.length > 0 && startDate && endDate && responsible
     );
   };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    showModal(false);
     const local = isLocal ? 1 : 0;
     const response = await ProtocolService.createProtocol(
       name,
@@ -36,7 +38,6 @@ export default function Protocol({
     );
     if (response && response.data && response.status === 201) {
       setProtocols((protocols) => [...protocols, response.data.protocol]);
-      showModal(false);
     } else {
       console.log("Error al crear un proyecto");
     }
