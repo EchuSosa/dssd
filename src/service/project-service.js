@@ -7,6 +7,7 @@ const getAll = async (id) => {
   const response = await axios
     .get(`${API_URL}/getActiveCases/${id}`)
     .then((response) => {
+      console.log(response)
       return response;
     })
     .catch((error) => {
@@ -17,7 +18,7 @@ const getAll = async (id) => {
 
 const getProjectsByUserId = async (id) => {
   const response = await axios
-    .get(`${API_URL}/projects/user/${id}`)
+    .get(`${API_URL}/bonita/projects/user/${id}`)
     .then((response) => {
       return response;
     })

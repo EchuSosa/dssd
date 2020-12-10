@@ -11,10 +11,14 @@ const ResponsibleOfProtocol = () => {
   const [protocols, setProtocols] = useState([]);
   const [score, setScore] = useState(null);
   const [idProtocol, setIdProtocol] = useState(false);
+  const [idProject, setIdProject] = useState(false);
+
 
   // Modal
   const handleClose = () => setShow(false);
-  const handleShow = (id) => {
+  
+  const handleShow = (id,idProject) => {
+    setIdProject(idProject)
     setIdProtocol(id);
     setShow(true);
   };
@@ -26,7 +30,7 @@ const ResponsibleOfProtocol = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setShow(false);
-    await ProtocolService.executeProtocol(idProtocol, score);
+    await ProtocolService.executeProtocol(idProtocol, idProject, score,localStorage.getItem("userId"));
   };
 
   //Casos activos de bonita
@@ -131,7 +135,7 @@ const ResponsibleOfProtocol = () => {
                     {!protocol.started && (
                       <Button
                         variant="danger"
-                        onClick={() => handleShow(protocol.id)}
+                        onClick={() => handleShow(protocol.id,protocol.project_id)}
                       >
                         Ejecutar
                       </Button>

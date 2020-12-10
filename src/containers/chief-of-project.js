@@ -26,19 +26,9 @@ export default function ChiefOfProject() {
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
-      setProjects(data.response);
-      setears();
+      setProjects(data.response);      
     }
-  };
-
-  const setears = () => {
-    projects.map(async (project) => {
-      let activities = await ProjectService.getCurrentActivity(project.id);
-      if (activities.data[0].name === "Crear Proyecto") {
-        setSetear((setear) => [...setear, parseInt(project.id)]);
-      }
-    });
-  };
+  }; 
 
   const getCurrentActivity = async (id) => {
     const { data, status } = await ProjectService.getCurrentActivity(id);
@@ -74,25 +64,27 @@ export default function ChiefOfProject() {
   const handleShowProtocols = async () => {};
 
   const startProject = async (projectId) => {
+    
     const { data } = await ProjectService.getProtocolsByProject(projectId);
+   /*
     if (data.protocol.length === 0) {
       setModalMessage(
         "Para poder iniciar un proyecto debe agregarse al menos un protocolo."
       );
       handleShow();
     } else {
-      /*TODO deshabilitar el botón de iniciar proyecto funciona una vez, 
-      pero si vamos a los protocolos y volvemos se vuelve a habilitar, 
-      y en ese caso se podría correr otra tarea desde ahí, habría que guardar 
-      algo en la bd para consultar si ya no fue iniciado podría ser el startDate?*/
-      //setDisabledButton(true);//arreglar porque diseablea todo
+   
       
       await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
-      await ProjectService.startActivity(projectId);      
+      await ProjectService.startActivity(projectId);
       handleShow();
       setModalMessage("El proyecto ha sido inicializado correctamente.");
 
-    }
+    } */
+      await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
+      await ProjectService.startActivity(projectId);
+      handleShow();
+      setModalMessage("El proyecto ha sido inicializado correctamente.");
   };
 
   const formatDate = (date) => {
