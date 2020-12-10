@@ -53,6 +53,16 @@ const getProtocolsByUser = async (userId) => {
   return response;
 };
 
+const getProtocolsByProjectId = async (projectId) => {
+  const response = await axios
+    .get(`${API_URL}/protocols/project/${projectId}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {});
+  return response;
+};
+
 const executeProtocol = async (id, score) => {
   const response = await axios
     .put(`${API_URL}/protocols/${id}/approve`, {
@@ -73,4 +83,5 @@ export default {
   createProtocol,
   getProtocolsByUser,
   executeProtocol,
+  getProtocolsByProjectId,
 };
