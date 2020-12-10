@@ -26,30 +26,27 @@ export default function ChiefOfProject() {
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
-      setProjects(data.response); 
-      setears();     
-    }       
-  };
-
-  const setears = ()=>{
-    projects.map( async (project) =>  {
-      let activities = await ProjectService.getCurrentActivity(project.id)
-      if(activities.data[0].name === "Crear Proyecto"){
-        setSetear(setear =>[...setear, parseInt(project.id)])
-      }          
-    }    
-    )
-  }
-
-  const getCurrentActivity = async (id) => {
-    
-    const { data, status } = await ProjectService.getCurrentActivity(id);   
-    if (status === 200 && data) {
-      console.log(data[0].name)
-      return data[0].name
+      setProjects(data.response);
+      setears();
     }
   };
 
+  const setears = () => {
+    projects.map(async (project) => {
+      let activities = await ProjectService.getCurrentActivity(project.id);
+      if (activities.data[0].name === "Crear Proyecto") {
+        setSetear((setear) => [...setear, parseInt(project.id)]);
+      }
+    });
+  };
+
+  const getCurrentActivity = async (id) => {
+    const { data, status } = await ProjectService.getCurrentActivity(id);
+    if (status === 200 && data) {
+      console.log(data[0].name);
+      return data[0].name;
+    }
+  };
 
   useEffect(() => {
     getProjects();
@@ -88,7 +85,7 @@ export default function ChiefOfProject() {
       pero si vamos a los protocolos y volvemos se vuelve a habilitar, 
       y en ese caso se podría correr otra tarea desde ahí, habría que guardar 
       algo en la bd para consultar si ya no fue iniciado podría ser el startDate?*/
-      setDisabledButton(true);//arreglar porque diseablea todo
+      setDisabledButton(true); //arreglar porque diseablea todo
       handleShow();
       setModalMessage("El proyecto ha sido inicializado correctamente.");
       await ProjectService.startActivity(projectId);
@@ -153,11 +150,11 @@ export default function ChiefOfProject() {
             </thead>
             <tbody>
               {projects.length > 0 &&
-                 projects.map((project) => (
+                projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
                     <td>{project.state === "started" && "Creado"}</td>
-                    <td>{ "s"  ? "ok" : "ss" } </td>
+                    <td>{"s" ? "ok" : "ss"} </td>
                     <td>{formatDate(project.start)}</td>
                     <td>
                       <Button
