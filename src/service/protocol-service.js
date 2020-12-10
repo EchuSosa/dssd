@@ -32,7 +32,7 @@ const createProtocol = async (
       startDate: startDate,
       endDate: endDate,
       project_id: projectid,
-      executed: false,
+      started: false,
     })
     .then((response) => {
       return response;

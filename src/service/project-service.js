@@ -78,6 +78,18 @@ const getAllActiveCases = async () => {
   return response;
 };
 
+const getCurrentActivity = async (parentCaseId) => {
+  const response = await axios
+    .get(`${API_URL}/bonita/activity/${parentCaseId}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
 export default {
   getAll,
   startActivity,
@@ -85,4 +97,5 @@ export default {
   createProject,
   getProtocolsByProject,
   getAllActiveCases,
+  getCurrentActivity
 };

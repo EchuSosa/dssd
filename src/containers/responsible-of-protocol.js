@@ -57,10 +57,8 @@ const ResponsibleOfProtocol = () => {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, [handleSubmit]);
+  fetchData();
+  
 
   return (
     <>
@@ -116,9 +114,9 @@ const ResponsibleOfProtocol = () => {
                   <td>{protocol.id}</td>
                   <td>{protocol.name}</td>
                   <td>{protocol.project_id}</td>
-                  <td>{!protocol.executed ? "Ready" : "Executed"}</td>
+                  <td>{!protocol.started ? "Ready" : "Started"}</td>
                   <td>
-                    {!protocol.executed && (
+                    {!protocol.started && (
                       <Button
                         variant="danger"
                         onClick={() => handleShow(protocol.id)}

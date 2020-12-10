@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Form, Button, Table, Modal } from "react-bootstrap";
-
 import ProjectService from "../service/project-service";
 import "./Chief.css";
 import Navbar from "../components/navbar";
@@ -10,6 +9,7 @@ export default function ChiefOfProject() {
   const [name, setName] = useState("");
   const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
+  const [setear, setSetear] = useState([]);
   const [show, setShow] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   //TODO Verificar si se deshabilita el botón de iniciar una vez que lo iniciamos
@@ -26,9 +26,30 @@ export default function ChiefOfProject() {
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
-      setProjects(data.response);
+      setProjects(data.response); 
+      setears();     
+    }       
+  };
+
+  const setears = ()=>{
+    projects.map( async (project) =>  {
+      let activities = await ProjectService.getCurrentActivity(project.id)
+      if(activities.data[0].name === "Crear Proyecto"){
+        setSetear(setear =>[...setear, parseInt(project.id)])
+      }          
+    }    
+    )
+  }
+
+  const getCurrentActivity = async (id) => {
+    
+    const { data, status } = await ProjectService.getCurrentActivity(id);   
+    if (status === 200 && data) {
+      console.log(data[0].name)
+      return data[0].name
     }
   };
+
 
   useEffect(() => {
     getProjects();
@@ -132,10 +153,11 @@ export default function ChiefOfProject() {
             </thead>
             <tbody>
               {projects.length > 0 &&
-                projects.map((project) => (
+                 projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
                     <td>{project.state === "started" && "Creado"}</td>
+                    <td>{ "s"  ? "ok" : "ss" } </td>
                     <td>{formatDate(project.start)}</td>
                     <td>
                       <Button
