@@ -11,6 +11,9 @@ export default function ChiefOfProject() {
   const [projects, setProjects] = useState([]);
   const [setear, setSetear] = useState([]);
   const [show, setShow] = useState(false);
+  const [showApprove, setShowApprove] = useState(false);
+  const [proyectIdRegister, setProyectIdRegister] = useState(null);
+
   const [modalMessage, setModalMessage] = useState("");
   //TODO Verificar si se deshabilita el botón de iniciar una vez que lo iniciamos
   const [disabledButton, setDisabledButton] = useState(false);
@@ -71,6 +74,26 @@ export default function ChiefOfProject() {
     }
   };
 
+  const handleSubmitApprove = async (event) => {
+    event.preventDefault();
+    setShowApprove(false);
+    const { data } = await ProjectService.getCurrentActivity(proyectIdRegister);
+    if (data[0].displayName === "Registrar resultado") {
+      await ProjectService.assignActivity(
+        proyectIdRegister,
+        localStorage.getItem("userId")
+      );
+      await ProjectService.startActivity(proyectIdRegister);
+      setModalMessage("El protocolo ha sido aprobado correctamente.");
+      handleShow();
+    } else {
+      setModalMessage(
+        "Para poder aprobar un proyecto deben ejecutarse todos los protocolos asociados."
+      );
+      handleShow();
+    }
+  };
+
   const handleShowProtocols = async () => {};
 
   const startProject = async (projectId) => {
@@ -99,9 +122,35 @@ export default function ChiefOfProject() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const handleCloseApprove = () => setShowApprove(false);
+  const handleShowApprove = (projectId) => {
+    setShowApprove(true);
+    setProyectIdRegister(projectId);
+  };
+
   return (
     <>
       <Navbar />
+
+      <Modal show={showApprove} onHide={handleCloseApprove}>
+        <Modal.Header closeButton>
+          <Modal.Title>Aprobar proyecto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group size="lg" controlId="proyectId">
+            <Form.Label>Id de proyecto: {proyectIdRegister}</Form.Label>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseApprove}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSubmitApprove}>
+            Aprobar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Proyectos</Modal.Title>
@@ -154,7 +203,6 @@ export default function ChiefOfProject() {
                   <tr>
                     <td>{project.id}</td>
                     <td>{project.state === "started" && "Creado"}</td>
-                    <td>{"s" ? "ok" : "ss"} </td>
                     <td>{formatDate(project.start)}</td>
                     <td>
                       <Button
@@ -176,6 +224,37 @@ export default function ChiefOfProject() {
                         disabled={disabledButton}
                       >
                         Iniciar Proyecto
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </Table>
+        </div>
+
+        <div className="mt-5">
+          <h3>Proyectos listos para verificar</h3>
+          <Table striped bordered hover size="lg">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha de creación</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.length > 0 &&
+                projects.map((project) => (
+                  <tr>
+                    <td>{project.id}</td>
+                    <td>{formatDate(project.start)}</td>
+                    <td>
+                      <Button
+                        variant="info"
+                        size="sm"
+                        onClick={() => handleShowApprove(project.id)}
+                      >
+                        Registrar resultado
                       </Button>
                     </td>
                   </tr>
