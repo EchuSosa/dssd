@@ -26,30 +26,27 @@ export default function ChiefOfProject() {
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
-      setProjects(data.response); 
-      setears();     
-    }       
-  };
-
-  const setears = ()=>{
-    projects.map( async (project) =>  {
-      let activities = await ProjectService.getCurrentActivity(project.id)
-      if(activities.data[0].name === "Crear Proyecto"){
-        setSetear(setear =>[...setear, parseInt(project.id)])
-      }          
-    }    
-    )
-  }
-
-  const getCurrentActivity = async (id) => {
-    
-    const { data, status } = await ProjectService.getCurrentActivity(id);   
-    if (status === 200 && data) {
-      console.log(data[0].name)
-      return data[0].name
+      setProjects(data.response);
+      setears();
     }
   };
 
+  const setears = () => {
+    projects.map(async (project) => {
+      let activities = await ProjectService.getCurrentActivity(project.id);
+      if (activities.data[0].name === "Crear Proyecto") {
+        setSetear((setear) => [...setear, parseInt(project.id)]);
+      }
+    });
+  };
+
+  const getCurrentActivity = async (id) => {
+    const { data, status } = await ProjectService.getCurrentActivity(id);
+    if (status === 200 && data) {
+      console.log(data[0].name);
+      return data[0].name;
+    }
+  };
 
   useEffect(() => {
     getProjects();
@@ -156,7 +153,7 @@ export default function ChiefOfProject() {
             </thead>
             <tbody>
               {projects.length > 0 &&
-                 projects.map((project) => (
+                projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
                     <td>{project.state === "started" && "Creado"}</td>

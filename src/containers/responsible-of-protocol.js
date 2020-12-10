@@ -29,36 +29,48 @@ const ResponsibleOfProtocol = () => {
     await ProtocolService.executeProtocol(idProtocol, score);
   };
 
-  const fetchData = async () => {
+  //Casos activos de bonita
+  const getAllActiveCases = async () => {
+    return await ProjectService.getAllActiveCases();
+  };
+
+  //Protocolos por usuario actual de bd
+  const getProtocolsByUser = async () => {
+    return await ProtocolService.getProtocolsByUser(
+      localStorage.getItem("userId")
+    );
+  };
+
+  //Proyectos executados de la bd
+  const startedProjects = async () => {
+    await ProjectService.getStartedProjects();
+  };
+
+  const getProtocols = async () => {
     try {
-      //Casos activos de bonita
-      const bonitaCases = await ProjectService.getAllActiveCases();
-      //Protocolos por usuario actual de bd
-      const { data, status } = await ProtocolService.getProtocolsByUser(
-        localStorage.getItem("username")
+      const bonitaCases = await getAllActiveCases();
+      const { data } = await getProtocolsByUser();
+      const startedProjectsFromDB = await startedProjects();
+      console.log("startedProjectsFromDB", startedProjectsFromDB);
+
+      let projectsIdFromBonita = [];
+      bonitaCases.data.map((d) => {
+        if (!projectsIdFromBonita.includes(d.rootCaseId))
+          projectsIdFromBonita.push(d.rootCaseId);
+      });
+
+      let filterProtocols = data.filter((element) =>
+        projectsIdFromBonita.includes(element.project_id)
       );
-      if (bonitaCases && bonitaCases.data && status === 200 && data) {
-        //Me quedo solo con los rootCaseId activos de bonita
-        let projectsIdFromBonita = [];
-        bonitaCases.data.map((d) => {
-          if (!projectsIdFromBonita.includes(d.rootCaseId))
-            projectsIdFromBonita.push(d.rootCaseId);
-        });
-        //Filtro de los protocolos de DB que solamente esten en los casos activos de bonita
-        let filterProtocols = data.filter((element) =>
-          projectsIdFromBonita.includes(element.project_id)
-        );
-        //Seteo para mostrar en la vista solo el filtro
-        setProtocols(filterProtocols);
-      } else {
-        console.log("Error al cargar los protocolos");
-      }
+      setProtocols(filterProtocols);
     } catch (error) {
       console.log(error);
     }
   };
-  fetchData();
-  
+
+  useEffect(() => {
+    getProtocols();
+  }, []);
 
   return (
     <>

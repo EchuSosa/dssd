@@ -71,7 +71,7 @@ const ProtocolsList = (props) => {
                 <tr>
                   <td>{protocol.id}</td>
                   <td>{protocol.name}</td>
-                  <td>{protocol.username}</td>
+                  <td>{protocol.user_id}</td>
                   <td>{protocol.order}</td>
                 </tr>
               ))}
