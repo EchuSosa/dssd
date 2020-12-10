@@ -63,6 +63,18 @@ const startActivity = async (parentCaseId) => {
   return response;
 };
 
+const assignActivity = async (parentCaseId, userId) => {
+  const response = await axios
+    .post(`${API_URL}/assignActivity`, { parentCaseId: parentCaseId, userId:userId })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
 const createProject = async (name, endDate) => {
   const response = await axios
     .post(`${API_URL}/createNewProject`, {
@@ -123,6 +135,7 @@ export default {
   getProtocolsByProject,
   getAllActiveCases,
   getCurrentActivity,
+  assignActivity,
   getStartedProjects,
   getProjectsByUserIdAndProjectId,
 };
