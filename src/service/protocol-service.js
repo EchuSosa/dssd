@@ -26,7 +26,7 @@ const createProtocol = async (
   const response = await axios
     .post(`${API_URL}/protocols`, {
       name: name,
-      username: responsible,
+      user_id: responsible,
       order: orden,
       isLocal: local,
       startDate: startDate,
@@ -43,9 +43,9 @@ const createProtocol = async (
   return response;
 };
 
-const getProtocolsByUser = async (username) => {
+const getProtocolsByUser = async (userId) => {
   const response = await axios
-    .get(`${API_URL}/protocols/user/${username}`)
+    .get(`${API_URL}/protocols/user/${userId}`)
     .then((response) => {
       return response;
     })

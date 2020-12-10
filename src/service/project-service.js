@@ -27,6 +27,30 @@ const getProjectsByUserId = async (id) => {
   return response;
 };
 
+const getProjectsByUserIdAndProjectId = async (idUser, idProject) => {
+  const response = await axios
+    .get(`${API_URL}/projects/user/${idUser}/project/${idProject}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getStartedProjects = async () => {
+  const response = await axios
+    .get(`${API_URL}/projects/started`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
 const startActivity = async (parentCaseId) => {
   const response = await axios
     .post(`${API_URL}/startActivity`, { parentCaseId: parentCaseId })
@@ -44,6 +68,7 @@ const createProject = async (name, endDate) => {
     .post(`${API_URL}/createNewProject`, {
       name: name,
       endDate: endDate,
+      started: false,
     })
     .then((response) => {
       return response;
@@ -97,5 +122,7 @@ export default {
   createProject,
   getProtocolsByProject,
   getAllActiveCases,
-  getCurrentActivity
+  getCurrentActivity,
+  getStartedProjects,
+  getProjectsByUserIdAndProjectId,
 };
