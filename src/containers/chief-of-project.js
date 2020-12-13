@@ -96,7 +96,6 @@ export default function ChiefOfProject() {
       );
       handleShow();
     } else {
-   
       
       await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
       await ProjectService.startActivity(projectId);
@@ -107,7 +106,7 @@ export default function ChiefOfProject() {
       await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
       await ProjectService.startActivity(projectId);
       handleShow();
-      setModalMessage("El proyecto ha sido inicializado correctamente.");
+      setModalMessage("La tarea fue avanzada.");
   };
 
   const formatDate = (date) => {
@@ -218,7 +217,7 @@ export default function ChiefOfProject() {
                         onClick={() => startProject(project.id)}
                         disabled={disabledButton}
                       >
-                        Iniciar Proyecto
+                        Avanzar Tarea
                       </Button>
                     </td>
                   </tr>

@@ -27,7 +27,9 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log("entra al login")
       const response = await AuthService.login(username, password);
+      console.log(response.data)
       if (response.status === 200 && response.data) {
         storageData(response.data);
         //Una vez que sepamos como recuperar los roles
