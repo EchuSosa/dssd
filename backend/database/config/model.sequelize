@@ -1,0 +1,5 @@
+sequelize model:generate --name User --attributes username:string,password:string,name:string,email:string,last_login:date
+sequelize model:generate --name Project --attributes name:string,user_id:integer,startDate:date,endDate:date
+sequelize model:generate --name Protocol --attributes user_id:integer,name:string,order:integer,isLocal:integer,startDate:date,endDate:date,project_id:integer,score:integer
+sequelize model:generate --name Role --attributes name:String
+sequelize model:generate --name User_Roles --attributes userId:integer,roleId:integer

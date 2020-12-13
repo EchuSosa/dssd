@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <div class="">
+    <h1>Nuevo Proyecto</h1>
+    <div id="result">
+
+    </div>
+  </div>
+  <br>
+  <div class="container">
+    <form id="formElem" class="notneeds-validation" novalidate>
+      <div class="form-row">
+        <div class="col-md-4 mb-3">
+          <label for="validationTooltip01">Porject Name</label>
+          <input type="text" class="form-control" id="validationTooltip01" placeholder="Name" value="My Project X"
+            required>
+          <div class="valid-tooltip">
+            Looks good!
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationTooltip02">Start date</label>
+          <input type="datetime" class="form-control" id="validationTooltip02" placeholder="Start" required>
+          <div class="valid-tooltip">
+            Looks good!
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationTooltip02">End date</label>
+          <input type="datetime" class="form-control" id="validationTooltip02" placeholder="End" required>
+          <div class="valid-tooltip">
+            Looks good!
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationTooltipManager">Manager</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="validationTooltipUsernamePrepend">@</span>
+            </div>
+            <input type="text" class="form-control" id="validationTooltipUsername" placeholder="Manager"
+              aria-describedby="validationTooltipUsernamePrepend" onsumbit="" required>
+            <div class="valid-tooltip">
+              Looks good!
+            </div>
+            <div class="invalid-tooltip">
+              Please choose a unique and valid username.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit">Submit form</button>
+    </form>
+  </div>
+</body>
+
+
+</html>
+
+<script>
+  formElem.onsubmit = async (e) => {
+    e.preventDefault();
+    console.log('holi')
+  };
+</script>

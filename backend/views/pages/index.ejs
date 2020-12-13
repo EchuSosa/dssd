@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <% include ../partials/header.ejs %>
+</head>
+
+<body>
+  <% include ../partials/nav.ejs %>
+
+  <div class="jumbotron text-center">
+    <div class="container">
+      <!--
+      <a href="/" class="lang-logo">
+        <img src="/public/lang-logo.png">
+      </a>
+    -->
+      <h1>DSSD-2020 GRUPO 1</h1>
+      <h2>GRUPO 1</h2>
+      <h3>Bellino / Faraone Negri / Sosa</h3>
+      <h4>LINK DE LA API: https://dssd-2020-lab.herokuapp.com</h4>
+
+    </div>
+  </div>
+  <div class="container">
+    <div class=" primary-info text-center" role="alert">
+      <p>API REST diseñada para la administracion de protocolos externos</p>
+      <p>Elegimos trabajar con Node.js por su popularidad, considerando el buen rendimiento, velocidad de desarrollo y la posibilidad que brinda de construir aplicaciones potentes y flexibles.<br>
+        Elegimos Heroku como PaaS para exponer nuestra API por su facilidad de uso y buen rendimiento. <br>
+      </p>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12" >
+        <div class="alert alert-dark" role="dark">
+          Para esta entrega decidimos implementar una API REST con NodeJS, además se optó por utilizar los siguientes módulos: 
+          <br>
+          <br>
+          <ul>
+          <li><strong>Express JS:</strong> Es un framework para Node.js que sirve para ayudarnos a crear aplicaciones web en menos tiempo ya que nos proporciona funcionalidades como el  enrutamiento, opciones para gestionar sesiones y cookies, y un largo etc…</li><br>
+          <li><strong> Sequelize:</strong>  Es un ORM basado en promesas para Node.js y io.js. Es compatible con los dialectos PostgreSQL, MySQL, MariaDB, SQLite y MSSQL y presenta un sólido soporte de transacciones, relaciones, replicación de lectura y más.</li><br>
+          <li><strong> PostgreSQL:</strong>   Es un sistema de gestión de bases de datos relacional orientado a objetos y de código abierto.</li><br>
+          <li><strong> JWT:</strong>  Se define un mecanismo para poder propagar entre dos partes, y de forma segura, la identidad de un determinado usuario, además con una serie de claims o privilegios. Estos privilegios están codificados en objetos de tipo JSON, que se incrustan dentro de del payload o cuerpo de un mensaje que va firmado digitalmente.</li><br>
+          <br>
+        </ul>
+        </div>
+        <div class="alert alert-danger" role="dark">
+          <p>La mayoría de los endpoints requiere un access token válido para poder operar, debemos solicitarlo pegando por POST usando POSTMAN o similares a la siguiente ruta: </p>
+          <h2><strong>POST /auth/signin </strong></h2>
+          <br>
+          {<br>
+            "username": "*********",<br> 
+            "password": "*********"<br>            
+          }          
+          <br>
+          (Se adjuntaron en la entrega)
+          <p>Luego de pegarle por POST usando postman, en la respuesta del servidor veremos el access token en caso de que el logueo sea exitoso.<br>
+            Debemos copiar el token y agregarlo en el encabezado de la petición que vayamos a realizar con el nombre "x-access-token"
+          </p>
+        </div>  
+        <ul class="list-group">
+        <h3><span>Rutas</span></h3>   
+          <li class="list-group-item list-group-item-success"><h2><strong>POST /api/auth/signup </strong></h2><br> Dar de alta un usuario, debemos enviarle el post con los siguientes datos:<br>
+            <br>
+            {<br>
+              "username": "anUsername",<br>
+              "password": "1234563",<br>
+              "name": "aName",<br>
+              "email": "youremail@example.com",<br>
+              "roles": ["admin","user", "moderator"]    (A futuro este sistema de roles se adaptara a los nombres requeridos por la catedra)<br> 
+            }
+            <br>
+        </li>
+          <li class="list-group-item list-group-item-success"><h2><strong>GET  /protocols </strong></h2><br> Devuelve los protocolos para el usuario logueado. Obtiene el id del token y lo utiliza para filtrar</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>GET  /protocols/:id </strong></h2><br>Consulta el estado de un protocolo particular. Debe ser el responsable del protocolo o jefe del proyecto para poder visualizar el estado</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>PUT  /protocols/:id/start </strong></h2><br> Inicia el protocolo que le pasemos por id, el usuario logueado debe ser el responsable de ese protocolo, de lo contrario se devuelve un forbidden. Tampoco se pueden lanzar protocolos ya iniciados o finalizados</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>PUT  /protocols/:id/approve </strong></h2><br> Finaliza el protocolo que le pasemos por id, debemos adjuntar el score en el body y debe ser un protocolo valido para ese usuario logueado, de lo contrario se devuelve un forbidden. Tampoco se pueden terminar protocolos que ya fueron finalizados
+            <br>
+            {<br>
+              "score": "7"<br>
+            }
+            <br>
+          </li>
+        </ul>
+        <ul class="list-group">
+          <li class="list-group-item list-group-item-success"><h2><strong>GET  /projects </strong></h2><br> Devuelve los proyectos para el usuario logueado. Obtiene el id del token y lo utiliza para filtrar</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>GET  /projects/:id </strong></h2><br>Consulta el estado de un proyecto particular. Debe ser el jefe del proyecto para poder visualizar el estado</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>PUT  /projects/:id/start </strong></h2><br> Inicia el proyecto que le pasemos por id, el usuario logueado debe ser el jefe de ese proyecto, de lo contrario se devuelve un forbidden. Tampoco se pueden lanzar proyectos ya iniciados o finalizados</li>
+          <li class="list-group-item list-group-item-success"><h2><strong>PUT  /projects/:id/approve </strong></h2><br> Finaliza el proyecto que le pasemos por id y debe ser un proyecto valido para ese usuario logueado, de lo contrario se devuelve un forbidden. Tampoco se pueden terminar proyectos que ya fueron finalizados</li>
+        </ul>
+      </div>
+      
+  </div>
+
+
+</body>
+</html>
