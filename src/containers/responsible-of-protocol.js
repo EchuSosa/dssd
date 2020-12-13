@@ -132,7 +132,7 @@ const ResponsibleOfProtocol = () => {
                   <td>{protocol.project_id}</td>
                   <td>{!protocol.started ? "Ready" : "Started"}</td>
                   <td>
-                    {!protocol.started && (
+                    {!protocol.executed && (
                       <Button
                         variant="danger"
                         onClick={() => handleShow(protocol.id,protocol.project_id)}

@@ -29,9 +29,9 @@ export default function ChiefOfProject() {
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
-      setProjects(data.response);      
+      setProjects(data.response);
     }
-  }; 
+  };
 
   const getCurrentActivity = async (id) => {
     const { data, status } = await ProjectService.getCurrentActivity(id);
@@ -40,6 +40,15 @@ export default function ChiefOfProject() {
       return data[0].name;
     }
   };
+
+  const renderSwitch = (param) => {
+    switch (param) {
+      case 'iniciado':
+        return '<> sisi';
+      default:
+        return 'nono';
+    }
+  }
 
   useEffect(() => {
     getProjects();
@@ -84,29 +93,29 @@ export default function ChiefOfProject() {
     }
   };
 
-  const handleShowProtocols = async () => {};
+  const handleShowProtocols = async () => { };
 
   const startProject = async (projectId) => {
-    
-    const { data } = await ProjectService.getProtocolsByProject(projectId);
-   /*
-    if (data.protocol.length === 0) {
-      setModalMessage(
-        "Para poder iniciar un proyecto debe agregarse al menos un protocolo."
-      );
-      handleShow();
-    } else {
-      
-      await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
-      await ProjectService.startActivity(projectId);
-      handleShow();
-      setModalMessage("El proyecto ha sido inicializado correctamente.");
 
-    } */
-      await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
-      await ProjectService.startActivity(projectId);
-      handleShow();
-      setModalMessage("La tarea fue avanzada.");
+    const { data } = await ProjectService.getProtocolsByProject(projectId);
+    /*
+     if (data.protocol.length === 0) {
+       setModalMessage(
+         "Para poder iniciar un proyecto debe agregarse al menos un protocolo."
+       );
+       handleShow();
+     } else {
+       
+       await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
+       await ProjectService.startActivity(projectId);
+       handleShow();
+       setModalMessage("El proyecto ha sido inicializado correctamente.");
+ 
+     } */
+    await ProjectService.assignActivity(projectId, localStorage.getItem("userId"));
+    await ProjectService.startActivity(projectId, localStorage.getItem("userId"));
+    handleShow();
+    setModalMessage("La tarea fue avanzada.");
   };
 
   const formatDate = (date) => {
@@ -188,7 +197,7 @@ export default function ChiefOfProject() {
                 <th>ID</th>
                 <th>Estado</th>
                 <th>Fecha de creación</th>
-                <th colspan="2">Acción</th>
+                <th colSpan="2">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -196,30 +205,41 @@ export default function ChiefOfProject() {
                 projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
-                    <td>{project.state === "started" && "Creado"}</td>
+                    <td>{project.currentState === "iniciado" && "Configurar protocolos"}</td>
                     <td>{formatDate(project.start)}</td>
                     <td>
-                      <Button
-                        variant="dark"
-                        size="sm"
-                        onClick={() => {
-                          handleShowProtocols();
-                          history.push(`/projects/${project.id}/protocols`);
-                        }}
-                      >
-                        Ver Protocolos
-                      </Button>
+                      {project.currentState === "iniciado" ?
+                        <Button variant="dark" size="sm" onClick={() => {
+                          handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
+                        }
+                        }
+                        >
+                          Cargar Protocolos
+                      </Button> :
+                        <Button variant="dark" size="sm" onClick={() => {
+                          handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
+                        }
+                        }
+                        >
+                          Revisar protocolos
+                    </Button>
+                      }
                     </td>
+
                     <td>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => startProject(project.id)}
+                      {project.currentState === "iniciado" ?
+                        <Button variant="danger" size="sm" onClick={() => startProject(project.id)}
                         disabled={disabledButton}
-                      >
-                        Avanzar Tarea
-                      </Button>
-                    </td>
+                        >
+                          Finalizar Configuracion
+                      </Button> :
+                        <Button variant="danger" size="sm" onClick={() => startProject(project.id)}
+                        disabled={disabledButton}
+                        >
+                          Cancelar proyecto
+                    </Button>
+                      }
+                    </td>                   
                   </tr>
                 ))}
             </tbody>

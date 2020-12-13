@@ -41,7 +41,7 @@ export default function Protocol({
     if (response && response.data && response.status === 201) {
       setProtocols((protocols) => [...protocols, response.data.protocol]);
     } else {
-      console.log("Error al crear un proyecto");
+      console.log("Error al crear un protocolo");
     }
   };
 

@@ -52,9 +52,9 @@ const getStartedProjects = async () => {
   return response;
 };
 
-const startActivity = async (parentCaseId) => {
+const startActivity = async (parentCaseId, userId) => {
   const response = await axios
-    .post(`${API_URL}/startActivity`, { parentCaseId: parentCaseId })
+    .post(`${API_URL}/startActivity`, { parentCaseId: parentCaseId, userId:userId })
     .then((response) => {
       return response;
     })

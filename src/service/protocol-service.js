@@ -63,7 +63,7 @@ const getProtocolsByProjectId = async (projectId) => {
   return response;
 };
 
-const executeProtocol = async (id, score, projectId,userId) => {
+const executeProtocol = async (id, projectId, score,userId) => {
   const response = await axios
     .put(`${API_URL}/protocols/${id}/approve`, {
       id: id,
