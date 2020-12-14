@@ -222,6 +222,9 @@ const startActivity = async (req, res) => {
     console.log("paso el await de advance task")
     if (response) {
       console.log("entro al if porque habia response en el startActivity")
+      const decision = "ejecutando"
+      const params = [{"state":"ejecutando"}]
+      await model.Project.update(params[0], {where: {id:parentCaseId}})
       return res.status(200).json();
     }
     console.log("no entro al if porque no habia noresponse en el startActivity")

@@ -219,7 +219,7 @@ export default function ChiefOfProject() {
                     <td>{(project.currentState === "iniciado" || project.currentState == null) && "Configurar protocolos"}</td>
                     <td>{formatDate(project.start)}</td>
                     <td>
-                      {project.currentState === "iniciado" || project.currentState == null ?
+                      {(project.currentState === "iniciado" || project.currentState === null) ?
                         <Button variant="info" size="sm" onClick={() => {
                           handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
                         }
@@ -239,7 +239,7 @@ export default function ChiefOfProject() {
 
                     <td>
                       {            
-                      ( project.currentState === "iniciado" || project.currentState == null )?
+                      ( project.currentState === "iniciado" || project.currentState === null )?
                         <Button variant="success" size="sm" onClick={() => startProject(project.id)}
                         disabled={disabledButton}
                         >
