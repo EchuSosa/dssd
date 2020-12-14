@@ -40,7 +40,8 @@ const {
   getProtocolsByProjectId,
   getNextProtocol,
   executeRemoteProtocol,
-  createRemoteProtocol
+  createRemoteProtocol,
+  getRemoteValue
 } = require("../controller/protocol.controller");
 
 router.get("/protocols", getProtocols);
@@ -55,7 +56,8 @@ router.put("/protocols/:id/start", startProtocol);
 router.put("/protocols/:id/approve", approveProtocol);
 router.delete("/protocols/:id", deleteProtocol);
 router.post("/remote/protocols", createRemoteProtocol);
-router.get("/remote/protocol/:id", executeRemoteProtocol);
+router.put("/remote/protocol/:id", executeRemoteProtocol);
+router.get("/remote/protocol/:id", getRemoteValue);
 
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,6 +126,8 @@ const {
   getAllActiveCases,
   getAllUsers,
   getCurrentActivity,
+  deleteCase,
+  restartProtocol
 } = require("../controller/bonita.controller");
 
 router.post("/getTokenLogin", getTokenLogin);
@@ -140,6 +144,8 @@ router.post("/startActivity", startActivity);
 router.post("/assignActivity", assignActivity); //camb
 router.get("/bonita/users", getAllUsers);
 router.get("/bonita/activity/:parentCaseId", getCurrentActivity);
+router.delete("/bonita/:caseId", deleteCase);
+router.put("/bonita/protocol/:idProtocol", restartProtocol);
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

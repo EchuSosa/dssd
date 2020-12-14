@@ -49,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
       executed:{
         type: DataTypes.BOOLEAN,
         defaultValue: false
+      },
+      remoteId:{
+        type: DataTypes.INTEGER,
+        defaultValue: 0
       }
     },
     {

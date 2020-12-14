@@ -145,7 +145,12 @@ const executeRemoteProtocol = async (req, res) => {
     console.log("**********************  *******************bonita le pego con este id-> " + id)
     console.log("paso el atre de bonita")
     console.log("con esta cosa " + JSON.stringify(req.body))
-    return res.status(200).json({ "estado": "ejecutando protocolo remoto" });
+    const score = Math.floor(Math.random() * 11);
+    console.log("el score random que trae es "+score)
+    const protocol = await model.Protocol.update(
+      { endDate: Date.now(), score: score, executed: true },
+      { where: { id: id } });
+    return res.status(200).json({ protocol });
     /*
     const protocol = await model.Protocol.create(req.body);
     return res.status(201).json({
@@ -158,9 +163,24 @@ const executeRemoteProtocol = async (req, res) => {
 
 const createRemoteProtocol = async (req, res) => {
   try {
-      const protocol = await model.Protocol.create(req.body);    
-      return res.status(201).json({ protocol });
-    
+    const protocol = await model.Protocol.create(req.body);
+    return res.status(201).json({ protocol });
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+const getRemoteValue = async (req, res) => {
+  try { //hacer que heroku me devuelva el protocolo con el id local
+    const { id } = req.params
+    var url = heroku + 'remote/protocol/' + id
+    var  response  = await fetch(url)
+      .then(async (res) => { return await res.json() });
+    var protocol=response.protocol
+    console.log(JSON.stringify("UPDATEO EN HEROKU Y TRAJO-> "+JSON.stringify(protocol)))
+    var params = [{"score":protocol.score, "executed":true}];
+    protocol = await model.Protocol.update(params[0],{  where: { id: id } }   );
+    return res.status(500).json({ protocol });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -170,22 +190,44 @@ const createProtocol = async (req, res) => {
   try {
     if (req.body.isLocal == 1) {
       console.log("no entro para pegarle a hrokuuuuuuuuuuuuuuuuuuuuuuuuuu--------------")
-      var protocol = await model.Protocol.create(req.body);
+      const protocol = await model.Protocol.create(req.body);
       return res.status(201).json({ protocol });
     } else {
 
       console.log("entro para pegarle a hrokuuuuuuuuuuuuuuuuuuuuuuuuuu--------------")
-      
-      const CONTENT_TYPE = {
-        JSON: "application/json",
-      };       
-      console.log("los headers son ")
-      const url = heroku + 'remote/protocols'
-      console.log("la url es "+url)
-      const protocol_in = await fetch( url ,  { method: "POST", body: req  }).then((res)=>{console.log(res)});
-      console.log("protoloco-"+protocol_in)
-      return res.status(201).json( protocol_in);
+      var url = heroku + 'remote/protocols'
+      console.log("la url es " + url)
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(req.body)
+      })
+        .then(async (res) => { return await res.json() });
 
+      //creando protocolo en el local
+      remoteId = response.protocol.id
+      req.body['remoteId'] = remoteId
+      var protocol = await model.Protocol.create(req.body);
+
+
+      //seteando el local id
+      var localId = protocol.id
+      const params = [{ "localId": localId, "executed": true, "started": true }]
+      url = heroku + 'protocols/' + remoteId
+      protocol = await fetch(url, {
+        method: "PUT",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params[0])
+      })
+        .then(async (res) => { return await res.json() });
+      console.log(JSON.stringify("UPDATEO EN HEROKU Y TRAJO-> "+JSON.stringify(protocol)))
+      return res.status(201).json(protocol)
     }
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -219,6 +261,36 @@ const updateProtocol = async (req, res) => {
   }
 };
 
+const restartProtocol = async (req, res) => {
+  try {
+    const { idProtocol } = req.params;
+    var params = [{"score":null, "executed":false}];
+    var protocol = await model.Protocol.update(params[0],{  where: { id: idProtocol } }   );   
+    console.log("imprimer este proto"+protocol)
+    if (protocol) {
+      var updatedProtocol = await model.Protocol.findOne({
+        where: { id: idProtocol },
+      });
+
+      //lo vuelvo a encolar
+      const caseId = updatedProtocol.project_id
+      const lastOrder = await model.Protocol.max('order', {where : {'project_id': caseId }})
+      console.log("el last order es "+lastOrder)
+      params = [{"order":parseInt(lastOrder,10)+1}];
+      protocol = await model.Protocol.update(params[0],{  where: { id: idProtocol } }   );   
+      if (protocol) {
+        updatedProtocol = await model.Protocol.findOne({
+          where: { id: idProtocol },
+        });
+        return res.status(200).json({ protocol: updatedProtocol });
+      }
+      
+    }
+    throw new Error("Protocol not found");
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
 const deleteProtocol = async (req, res) => {
   try {
     const { id } = req.params;
@@ -402,5 +474,7 @@ module.exports = {
   getNextProtocol,
   getStatus,
   executeRemoteProtocol,
-  createRemoteProtocol
+  createRemoteProtocol,
+  getRemoteValue,
+  restartProtocol
 };

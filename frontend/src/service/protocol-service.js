@@ -63,6 +63,18 @@ const getProtocolsByProjectId = async (projectId) => {
   return response;
 };
 
+const restart = async (id) => {
+  const response = await axios
+    .put(`${API_URL}/bonita/protocol/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
 const executeProtocol = async (id, projectId, score,userId) => {
   const response = await axios
     .put(`${API_URL}/protocols/${id}/approve`, {
@@ -86,4 +98,5 @@ export default {
   getProtocolsByUser,
   executeProtocol,
   getProtocolsByProjectId,
+  restart
 };

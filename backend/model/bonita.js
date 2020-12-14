@@ -532,6 +532,17 @@ class Bonita {
     console.log("paso la request para setear la decision -> " + response)
     return  response;
   }
+  
+  async deleteCase(parentCaseId) {
+    const response = await fetch(bonita + '/API/bpm/case/' + parentCaseId,
+      {
+        method: 'DELETE',
+        headers: this.headers
+      }
+    ).then();
+    console.log("paso la request para ELIMINAR EL CASO-> " + response)
+    return  response;
+  }
 
   async getStatus(parentCaseId) {
     console.log("entro al model bonita get decision con->"+parentCaseId) 

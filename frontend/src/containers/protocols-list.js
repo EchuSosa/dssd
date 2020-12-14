@@ -19,6 +19,12 @@ const ProtocolsList = (props) => {
     history.push("/projectconf");
   };
 
+  const restartProtocol = async (idProtocol) => {
+    const response = await ProtocolService.restart(idProtocol);
+    console.log(response)
+    alert("restarteado")
+  };
+  
   const getProtocols = async () => {
     const { data } = await ProtocolService.getAll(props.match.params.id);
     setProtocols(data.protocol);
@@ -63,6 +69,9 @@ const ProtocolsList = (props) => {
               <th>Nombre</th>
               <th>Responsable</th>
               <th>Orden</th>
+              <th>Lugar de ejeccucion</th>
+              <th>Puntaje</th>
+              <th>Accion</th>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +82,19 @@ const ProtocolsList = (props) => {
                   <td>{protocol.name}</td>
                   <td>{protocol.user_id}</td>
                   <td>{protocol.order}</td>
+                  <td>{protocol.isLocal == 1 ? 'Local':'Remoto'}</td>
+                  <td>{protocol.score == null ? 'Sin puntaje': protocol.score}</td>
+                  <td>
+                      {            
+                      ( protocol.score !== null  ) ?
+                      (  <Button variant="danger" size="sm" onClick={() => restartProtocol(protocol.id)}
+                        
+                        >
+                          Reiniciar ejecuccion
+                      </Button> ) : ("")
+                       
+                      }
+                    </td>                   
                 </tr>
               ))}
           </tbody>

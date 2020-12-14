@@ -1,6 +1,6 @@
 const Bonita = require("../model/bonita");
 const model = require("../database/models/Index");
-const Project = require("./project.controller");
+const Protocol = require("./protocol.controller");
 
 /**
  * @echu
@@ -65,6 +65,43 @@ const advanceTaskBack = async (req, res) => {
     const response = await Bonita.advanceTask(req.body.id);
     if (response) {
       return res.status(200).json({ status: "Task advanced" });
+    }
+    return res.status(400).json({});
+  } catch (e) {
+    return res.status(403);
+  }
+};
+
+/**
+ * @fb
+ * @param {*} req
+ * @param {*} res
+ */
+const deleteCase = async (req, res) => {
+  try {
+    const { caseId } = req.params
+    console.log("llego al delete case del bonita controller con "+caseId)
+    const response = await Bonita.deleteCase(caseId);
+    if (response) {
+      return res.status(200).json({ status: "Task advanced" });
+    }
+    return res.status(400).json({});
+  } catch (e) {
+    return res.status(403);
+  }
+};
+
+/**
+ * @fb
+ * @param {*} req
+ * @param {*} res
+ */
+const restartProtocol = async (req, res) => {
+  try {
+    const { idProtocol } = req.body
+    const response = await Protocol.restartProtocol(req,res);
+    if (response) {
+      return res.status(200).json({ status: "Protocol Restarted" });
     }
     return res.status(400).json({});
   } catch (e) {
@@ -294,7 +331,9 @@ module.exports = {
   getGroupId,
   getAllUsers,
   getCurrentActivity,
-  assignActivity
+  assignActivity,
+  deleteCase,
+  restartProtocol
 };
 
 /*

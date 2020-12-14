@@ -33,6 +33,13 @@ export default function ChiefOfProject() {
     }
   };
 
+  const deleteProject = async (idProject) => {
+    const response = await ProjectService.deleteProject(idProject);
+    console.log(response)
+    alert("restarteado")
+    
+  };
+/*
   const getCurrentActivity = async (id) => {
     const { data, status } = await ProjectService.getCurrentActivity(id);
     if (status === 200 && data) {
@@ -49,7 +56,7 @@ export default function ChiefOfProject() {
         return 'nono';
     }
   }
-
+*/
   useEffect(() => {
     getProjects();
   }, [disabledButton]);
@@ -197,7 +204,11 @@ export default function ChiefOfProject() {
                 <th>ID</th>
                 <th>Estado</th>
                 <th>Fecha de creación</th>
-                <th colSpan="2">Acción</th>
+                <th >Protocolos</th>
+                <th >Accion</th>
+                <th >Eliminar</th>
+
+
               </tr>
             </thead>
             <tbody>
@@ -240,6 +251,13 @@ export default function ChiefOfProject() {
                           Cancelar proyecto
                     </Button>
                       }
+                    </td>
+                    <td>
+                    <Button variant="danger" size="sm" onClick={() => deleteProject(project.id)}
+                        disabled={disabledButton}
+                        >
+                          Eliminar proyecto
+                          </Button>
                     </td>                   
                   </tr>
                 ))}
