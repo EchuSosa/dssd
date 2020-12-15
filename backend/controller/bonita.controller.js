@@ -175,10 +175,7 @@ const getCasesByUser = async (req, res) => {
       var id = response[key].id
       console.log("entro con el id "+id)
       project = await model.Project.findOne({
-        where: { bonitaIdProject: id,
-          isLocal: {
-            [sequelize.Op.not]: 0
-          }
+        where: { bonitaIdProject: id     
          },
       });
       console.log("se trajo el proyecto"+project)

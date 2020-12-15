@@ -325,6 +325,7 @@ class Bonita {
         headers: this.headers,
       }
     ).then((res) => res.json());
+    
     return response;
   }
 
