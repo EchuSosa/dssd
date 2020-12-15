@@ -1,28 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Col, Row } from "react-bootstrap";
 import ProtocolService from "../service/protocol-service";
-import getAll from "../service/user-service";
 
 import "./Protocol.css";
 
 export default function Protocol({
   projectId,
-  protocols,
+  users,
   setProtocols,
   showModal,
 }) {
   const [name, setName] = useState("");
   const [responsible, setResponsible] = useState("");
   const [order, setOrder] = useState(0);
-  const [users, setUsers] = useState([]);
   const [isLocal, setIsLocal] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
   const validateForm = () => {
-    return (
-      name.length > 0 && order.length > 0 && startDate && endDate && responsible
-    );
+    return name.length > 0 && order.length > 0 && startDate && endDate;
   };
 
   const handleSubmit = async (event) => {
@@ -45,20 +41,6 @@ export default function Protocol({
     }
   };
 
-  const getUsers = async (event) => {
-    const {data,status} = await getAll();
-    console.log(data)
-    if (data && status === 200 ) {
-      setUsers(data);
-    } else {
-      console.log("Error al traer usuarios");
-    }
-  };
-
-  useEffect(() => {
-    getUsers();
-  }, []);
-
   return (
     <div className="protocol-body">
       <Form onSubmit={handleSubmit}>
@@ -72,18 +54,6 @@ export default function Protocol({
             type="text"
             onChange={(e) => setName(e.target.value)}
           />
-        </Form.Group>
-        <Form.Group controlId="formGridState">
-          <Form.Label>Responsable</Form.Label>
-          <Form.Control
-            as="select"
-            onChange={(e) => setResponsible(e.target.value)}
-            defaultValue="Seleccionar..."
-          >
-            <option disabled>Seleccionar...</option>
-            {users.map(user=><option value={user.id}>{user.firstname} {user.lastname}</option>)}
-          
-          </Form.Control>
         </Form.Group>
         <Row>
           <Col>
@@ -107,6 +77,23 @@ export default function Protocol({
             </Form.Group>
           </Col>
         </Row>
+        {isLocal && (
+          <Form.Group controlId="formGridState">
+            <Form.Label>Responsable</Form.Label>
+            <Form.Control
+              as="select"
+              onChange={(e) => setResponsible(e.target.value)}
+              defaultValue="Seleccionar..."
+            >
+              <option disabled>Seleccionar...</option>
+              {users.map((user) => (
+                <option value={user.id}>
+                  {user.firstname} {user.lastname}
+                </option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+        )}
         <Row>
           <Col>
             <Form.Group size="lg" controlId="startDate">

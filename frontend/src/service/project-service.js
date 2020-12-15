@@ -1,13 +1,11 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:5000";
-const BONITA_URL = "http://localhost:8080/bonita";
 
 const getAll = async (id) => {
   const response = await axios
     .get(`${API_URL}/getActiveCases/${id}`)
     .then((response) => {
-      console.log(response)
       return response;
     })
     .catch((error) => {
@@ -19,6 +17,18 @@ const getAll = async (id) => {
 const getProjectsByUserId = async (id) => {
   const response = await axios
     .get(`${API_URL}/bonita/projects/user/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getProjectByBonitaId = async (id) => {
+  const response = await axios
+    .get(`${API_URL}/projects/bonita/${id}`)
     .then((response) => {
       return response;
     })
@@ -54,7 +64,10 @@ const getStartedProjects = async () => {
 
 const startActivity = async (parentCaseId, userId) => {
   const response = await axios
-    .post(`${API_URL}/startActivity`, { parentCaseId: parentCaseId, userId:userId })
+    .post(`${API_URL}/startActivity`, {
+      parentCaseId: parentCaseId,
+      userId: userId,
+    })
     .then((response) => {
       return response;
     })
@@ -66,7 +79,10 @@ const startActivity = async (parentCaseId, userId) => {
 
 const assignActivity = async (parentCaseId, userId) => {
   const response = await axios
-    .post(`${API_URL}/assignActivity`, { parentCaseId: parentCaseId, userId:userId })
+    .post(`${API_URL}/assignActivity`, {
+      parentCaseId: parentCaseId,
+      userId: userId,
+    })
     .then((response) => {
       return response;
     })
@@ -77,6 +93,7 @@ const assignActivity = async (parentCaseId, userId) => {
 };
 
 const createProject = async (name, endDate) => {
+  console.log(name, endDate);
   const response = await axios
     .post(`${API_URL}/createNewProject`, {
       name: name,
@@ -141,11 +158,10 @@ const deleteProject = async (id) => {
 };
 
 const updateProject = async (caseId) => {
-  
   const response = await axios
-    .put(`${API_URL}/projects/case/${caseId}`,{
-      "status":"ejecutando"
-    })    
+    .put(`${API_URL}/projects/case/${caseId}`, {
+      status: "ejecutando",
+    })
     .then((response) => {
       return response;
     })
@@ -154,7 +170,6 @@ const updateProject = async (caseId) => {
     });
   return response;
 };
-
 
 export default {
   getAll,
@@ -168,5 +183,6 @@ export default {
   getStartedProjects,
   getProjectsByUserIdAndProjectId,
   deleteProject,
-  updateProject
+  updateProject,
+  getProjectByBonitaId,
 };

@@ -9,11 +9,9 @@ export default function ChiefOfProject() {
   const [name, setName] = useState("");
   const [endDate, setEndDate] = useState(null);
   const [projects, setProjects] = useState([]);
-  const [setear, setSetear] = useState([]);
   const [show, setShow] = useState(false);
   const [showApprove, setShowApprove] = useState(false);
   const [proyectIdRegister, setProyectIdRegister] = useState(null);
-
   const [modalMessage, setModalMessage] = useState("");
   //TODO Verificar si se deshabilita el botón de iniciar una vez que lo iniciamos
   const [disabledButton, setDisabledButton] = useState(false);
@@ -34,44 +32,36 @@ export default function ChiefOfProject() {
   };
 
   const deleteProject = async (idProject) => {
-    const response = await ProjectService.deleteProject(idProject);
-    console.log(response)
-    alert("Eliminado")
-    
-  };
-/*
-  const getCurrentActivity = async (id) => {
-    const { data, status } = await ProjectService.getCurrentActivity(id);
-    if (status === 200 && data) {
-      console.log(data[0].name);
-      return data[0].name;
+    const { status } = await ProjectService.deleteProject(idProject);
+    if (status === 200) {
+      setProjects(projects.filter((project) => project.id !== idProject));
+      handleShow();
+      setModalMessage("El proyecto ha sido eliminado correctamente.");
+    } else {
+      handleShow();
+      setModalMessage("Hubo un error al querer eliminar el proyecto");
     }
   };
 
-  const renderSwitch = (param) => {
-    switch (param) {
-      case 'iniciado':
-        return '<> sisi';
-      default:
-        return 'nono';
-    }
-  }
-*/
   useEffect(() => {
     getProjects();
-  }, [disabledButton]);
+  }, []);
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      const response = await ProjectService.createProject(name, endDate);
-      if (response && response.status === 200 && response.data) {
-        setProjects((projects) => [...projects, response.data]);
+      const { status, data } = await ProjectService.createProject(
+        name,
+        endDate
+      );
+      event.target.reset();
+      if (status === 200 && data) {
+        setProjects((projects) => [...projects, data]);
         handleShow();
         setModalMessage("El proyecto ha sido creado correctamente.");
         //TODO checkear si funciona bien, falla en el back en bonita no ejecuta
         //Una vez que está creado el proyecto podemos correr la primera tarea
-        await ProjectService.startActivity(response.data.id);
+        await ProjectService.startActivity(data.id);
       } else {
         console.log("Error al crear el proyecto");
       }
@@ -100,32 +90,36 @@ export default function ChiefOfProject() {
     }
   };
 
-  const handleShowProtocols = async () => { };
+  const handleShowProtocols = async () => {};
 
   const startProject = async (projectId) => {
-
     const { data } = await ProjectService.getProtocolsByProject(projectId);
-    /*
-     if (data.protocol.length === 0) {
-       setModalMessage(
-         "Para poder iniciar un proyecto debe agregarse al menos un protocolo."
-       );
-       handleShow();
-     } else {
-       
-       await ProjectService.assignActivity(projectId, localStorage.getItem("userId")); 
-       await ProjectService.startActivity(projectId);
-       handleShow();
-       setModalMessage("El proyecto ha sido inicializado correctamente.");
- 
-     } */
-
-     //aca deberia ir
-    await ProjectService.assignActivity(projectId, localStorage.getItem("userId"));
-    await ProjectService.startActivity(projectId, localStorage.getItem("userId"));
-    await ProjectService.updateProject(projectId);
-    handleShow();
-    setModalMessage("La tarea fue avanzada.");
+    if (data.protocol.length === 0) {
+      setModalMessage(
+        "Para poder finalizar la configuración de un proyecto debe agregarse al menos un protocolo."
+      );
+      handleShow();
+    } else {
+      await ProjectService.assignActivity(
+        projectId,
+        localStorage.getItem("userId")
+      );
+      await ProjectService.startActivity(
+        projectId,
+        localStorage.getItem("userId")
+      );
+      await ProjectService.updateProject(projectId);
+      handleShow();
+      setModalMessage(
+        "Se ha finalizado la configuración del proyecto correctamente."
+      );
+      const getAllProjects = await ProjectService.getAll(
+        localStorage.getItem("userId")
+      );
+      if (getAllProjects.status === 200 && getAllProjects.data) {
+        setProjects(getAllProjects.data.response);
+      }
+    }
   };
 
   const formatDate = (date) => {
@@ -171,7 +165,7 @@ export default function ChiefOfProject() {
         <Modal.Body>{modalMessage}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Cerrar
           </Button>
         </Modal.Footer>
       </Modal>
@@ -207,11 +201,9 @@ export default function ChiefOfProject() {
                 <th>ID</th>
                 <th>Estado</th>
                 <th>Fecha de creación</th>
-                <th >Protocolos</th>
-                <th >Accion</th>
-                <th >Eliminar</th>
-
-
+                <th>Protocolos</th>
+                <th>Accion</th>
+                <th>Eliminar</th>
               </tr>
             </thead>
             <tbody>
@@ -219,45 +211,65 @@ export default function ChiefOfProject() {
                 projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
-                    <td>{(project.currentState === "iniciado" || project.currentState == null) ? "Configurar protocolos":"Ejecutando"}</td>
+                    <td>
+                      {project.currentState === "iniciado" ||
+                      project.currentState == null
+                        ? "Configurar protocolos"
+                        : "Ejecutando"}
+                    </td>
                     <td>{formatDate(project.start)}</td>
                     <td>
-                      {(project.currentState === "iniciado" || project.currentState == null) ?
-                        <Button variant="info" size="sm" onClick={() => {
-                          handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
-                        }
-                        }
+                      {project.currentState === "iniciado" ||
+                      project.currentState == null ? (
+                        <Button
+                          variant="info"
+                          size="sm"
+                          onClick={() => {
+                            handleShowProtocols();
+                            history.push(`/projects/${project.id}/protocols`);
+                          }}
                         >
                           Cargar Protocolos
-                      </Button> :
-                        <Button variant="dark" size="sm" onClick={() => {
-                          handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
-                        }
-                        }
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="dark"
+                          size="sm"
+                          onClick={() => {
+                            handleShowProtocols();
+                            history.push(`/projects/${project.id}/protocols`);
+                          }}
                         >
                           Revisar protocolos
-                    </Button>
-                      }
+                        </Button>
+                      )}
                     </td>
 
                     <td>
-                      {            
-                      ( project.currentState === "iniciado" || project.currentState == null )?
-                        <Button variant="success" size="sm" onClick={() => startProject(project.id)}
-                        disabled={disabledButton}
+                      {project.currentState === "iniciado" ||
+                      project.currentState == null ? (
+                        <Button
+                          variant="success"
+                          size="sm"
+                          onClick={() => startProject(project.id)}
+                          disabled={disabledButton}
                         >
                           Finalizar Configuracion
-                      </Button> :
+                        </Button>
+                      ) : (
                         "Proyecto iniciado"
-                      }
+                      )}
                     </td>
                     <td>
-                    <Button variant="danger" size="sm" onClick={() => deleteProject(project.id)}
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => deleteProject(project.id)}
                         disabled={disabledButton}
-                        >
-                          Cancelar proyecto
-                          </Button>
-                    </td>                   
+                      >
+                        Cancelar proyecto
+                      </Button>
+                    </td>
                   </tr>
                 ))}
             </tbody>
@@ -276,25 +288,25 @@ export default function ChiefOfProject() {
             </thead>
             <tbody>
               {projects.length > 0 &&
-                projects.filter( function(project){
-                  return project.currentState == "esperando aprobacion"
-                }                  
-                ).map((project) => (
-                  <tr>
-                    <td>{project.id}</td>
-                    <td>{formatDate(project.start)}</td>
-                    <td>
-                      <Button
-                        variant="info"
-                        size="sm"
-                        onClick={() => handleShowApprove(project.id)}
-                      >
-                        Aprobar proyecto
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-                }
+                projects
+                  .filter(function (project) {
+                    return project.currentState == "esperando aprobacion";
+                  })
+                  .map((project) => (
+                    <tr>
+                      <td>{project.id}</td>
+                      <td>{formatDate(project.start)}</td>
+                      <td>
+                        <Button
+                          variant="info"
+                          size="sm"
+                          onClick={() => handleShowApprove(project.id)}
+                        >
+                          Aprobar proyecto
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </Table>
         </div>

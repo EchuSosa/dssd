@@ -9,6 +9,10 @@ class AppNavbar extends React.Component {
       ? localStorage.getItem("userId")
       : null;
 
+    const jobTitle = localStorage.getItem("jobTitle")
+      ? localStorage.getItem("jobTitle")
+      : null;
+
     const handleLogout = () => {
       AuthService.logout();
     };
@@ -17,11 +21,21 @@ class AppNavbar extends React.Component {
       <>
         <Navbar bg="dark" variant="dark">
           <Navbar.Brand href="/">DSSD - Grupo 1</Navbar.Brand>
-          {uid ? (            
+          {uid ? (
             <Nav className="ml-auto">
-              <Nav.Link onClick={handleLogout} href="/monitoring">
-                Monitoreo
-              </Nav.Link>
+              {jobTitle === "Jefe de Proyecto" && (
+                <>
+                  <Nav.Link href="/projects/monitoring">Monitoreo</Nav.Link>
+                  <Nav.Link href="/projectconf">
+                    Configuración de Proyectos
+                  </Nav.Link>
+                </>
+              )}
+              {jobTitle === "Responsable de protocolo" && (
+                <Nav.Link href="/protocolexec">
+                  Ejecución de protocolos
+                </Nav.Link>
+              )}
               <Nav.Link onClick={handleLogout} href="/">
                 Logout
               </Nav.Link>

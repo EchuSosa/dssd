@@ -18,17 +18,18 @@ const getProjects = async (req, res) => {
   }
 };
 
-const setStatus = async (req,res) =>{
-  try{
-    const { parentCaseId }= req.body
-    const params = [{"status":"ejecutando"}]
-    const project = await model.Project.update(params[0], {where: {bonitaIdProject:parentCaseId}})
+const setStatus = async (req, res) => {
+  try {
+    const { parentCaseId } = req.body;
+    const params = [{ status: "ejecutando" }];
+    const project = await model.Project.update(params[0], {
+      where: { bonitaIdProject: parentCaseId },
+    });
     return res.status(200).json({ project });
   } catch (error) {
     return res.status(500).send(error.message);
   }
-}
-
+};
 
 const getProjectById = async (req, res) => {
   try {
@@ -47,7 +48,22 @@ const getProjectById = async (req, res) => {
   }
 };
 
-
+const getProjectByBonitaId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const project = await model.Project.findOne({
+      where: { bonitaIdProject: id },
+    });
+    if (project) {
+      return res.status(200).json(project);
+    }
+    return res
+      .status(404)
+      .json({ message: "Project with the specified ID does not exists" });
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+};
 
 const getStartedProjects = async (req, res) => {
   try {
@@ -68,6 +84,7 @@ const getStartedProjects = async (req, res) => {
 
 const getProjectsByUserId = async (req, res) => {
   try {
+    console.log("controlador get by id");
     const { idUser } = req.params;
     const project = await model.Project.findAll({
       where: { user_id: idUser },
@@ -134,7 +151,9 @@ const updateProjectByCaseId = async (req, res) => {
       where: { bonitaIdProject: caseId },
     });
     if (updated) {
-      const updatedProject = await model.Project.findOne({ where: { bonitaIdProject: caseId } });
+      const updatedProject = await model.Project.findOne({
+        where: { bonitaIdProject: caseId },
+      });
       return res.status(200).json({ project: updatedProject });
     }
     throw new Error("Project not found");
@@ -179,5 +198,6 @@ module.exports = {
   getStartedProjects,
   getProjectsByUserIdAndProjectId,
   setStatus,
-  updateProjectByCaseId
+  updateProjectByCaseId,
+  getProjectByBonitaId,
 };

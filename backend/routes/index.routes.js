@@ -35,18 +35,18 @@ const {
   deleteProtocol,
   startProtocol,
   approveProtocol,
-  getProtocolsByProjects,
+  getProtocolsByProject,
   getProtocolsByUser,
   getProtocolsByProjectId,
   getNextProtocol,
   executeRemoteProtocol,
   createRemoteProtocol,
-  getRemoteValue
+  getRemoteValue,
 } = require("../controller/protocol.controller");
 
 router.get("/protocols", getProtocols);
 router.get("/protocols/:id", getProtocolById);
-router.get("/protocols/project/:id", getProtocolsByProjects);
+router.get("/protocols/project/:id", getProtocolsByProject);
 router.get("/protocols/project/:idProject/:current", getNextProtocol);
 router.get("/protocols/user/:userId", getProtocolsByUser);
 router.get("/bonita/protocols/project/:projectId", getProtocolsByProjectId);
@@ -58,7 +58,6 @@ router.delete("/protocols/:id", deleteProtocol);
 router.post("/remote/protocols", createRemoteProtocol);
 router.put("/remote/protocol/:id", executeRemoteProtocol);
 router.get("/remote/protocol/:id", getRemoteValue);
-
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -74,6 +73,7 @@ const {
   getStartedProjects,
   getProjectsByUserIdAndProjectId,
   updateProjectByCaseId,
+  getProjectByBonitaId,
 } = require("../controller/project.controller");
 router.get("/projects/add", (req, res) =>
   res.render("../views/pages/newProject.ejs")
@@ -86,6 +86,7 @@ router.get(
   "/projects/user/:idUser/project/:idProject",
   getProjectsByUserIdAndProjectId
 );
+router.get("/projects/bonita/:id", getProjectByBonitaId);
 router.put("/projects/:id", updateProject);
 router.put("/projects/case/:caseId", updateProjectByCaseId);
 
@@ -130,7 +131,7 @@ const {
   getAllUsers,
   getCurrentActivity,
   deleteCase,
-  restartProtocol
+  restartProtocol,
 } = require("../controller/bonita.controller");
 
 router.post("/getTokenLogin", getTokenLogin);

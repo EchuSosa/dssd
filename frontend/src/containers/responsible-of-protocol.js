@@ -13,12 +13,11 @@ const ResponsibleOfProtocol = () => {
   const [idProtocol, setIdProtocol] = useState(false);
   const [idProject, setIdProject] = useState(false);
 
-
   // Modal
   const handleClose = () => setShow(false);
-  
-  const handleShow = (id,idProject) => {
-    setIdProject(idProject)
+
+  const handleShow = (id, idProject) => {
+    setIdProject(idProject);
     setIdProtocol(id);
     setShow(true);
   };
@@ -30,7 +29,13 @@ const ResponsibleOfProtocol = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setShow(false);
-    await ProtocolService.executeProtocol(idProtocol, idProject, score,localStorage.getItem("userId"));
+    await ProtocolService.executeProtocol(
+      idProtocol,
+      idProject,
+      score,
+      localStorage.getItem("userId")
+    );
+    getProtocols();
   };
 
   //Casos activos de bonita
@@ -55,7 +60,6 @@ const ResponsibleOfProtocol = () => {
       const bonitaCases = await getAllActiveCases();
       const { data } = await getProtocolsByUser();
       const startedProjectsFromDB = await startedProjects();
-      console.log("startedProjectsFromDB", startedProjectsFromDB);
 
       let projectsIdFromBonita = [];
       bonitaCases.data.map((d) => {
@@ -66,7 +70,11 @@ const ResponsibleOfProtocol = () => {
       let filterProtocols = data.filter((element) =>
         projectsIdFromBonita.includes(element.project_id)
       );
-      setProtocols(filterProtocols);
+
+      let filterProtocolsLocal = filterProtocols.filter(
+        (element) => element.isLocal === 1
+      );
+      setProtocols(filterProtocolsLocal);
     } catch (error) {
       console.log(error);
     }
@@ -137,7 +145,9 @@ const ResponsibleOfProtocol = () => {
                     {!protocol.executed && (
                       <Button
                         variant="danger"
-                        onClick={() => handleShow(protocol.id,protocol.project_id)}
+                        onClick={() =>
+                          handleShow(protocol.id, protocol.project_id)
+                        }
                       >
                         Ejecutar
                       </Button>
