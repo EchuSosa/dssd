@@ -127,6 +127,7 @@ const getCurrentActivity = async (parentCaseId) => {
     });
   return response;
 };
+
 const deleteProject = async (id) => {
   const response = await axios
     .delete(`${API_URL}/bonita/${id}`)
@@ -138,6 +139,23 @@ const deleteProject = async (id) => {
     });
   return response;
 };
+
+const updateProject = async (caseId) => {
+  
+  const response = await axios
+    .put(`${API_URL}/projects/case/${caseId}`,{
+      "status":"ejecutando"
+    })    
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+
 export default {
   getAll,
   startActivity,
@@ -149,5 +167,6 @@ export default {
   assignActivity,
   getStartedProjects,
   getProjectsByUserIdAndProjectId,
-  deleteProject
+  deleteProject,
+  updateProject
 };

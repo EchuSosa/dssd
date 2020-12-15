@@ -36,7 +36,7 @@ export default function ChiefOfProject() {
   const deleteProject = async (idProject) => {
     const response = await ProjectService.deleteProject(idProject);
     console.log(response)
-    alert("restarteado")
+    alert("Eliminado")
     
   };
 /*
@@ -119,8 +119,11 @@ export default function ChiefOfProject() {
        setModalMessage("El proyecto ha sido inicializado correctamente.");
  
      } */
+
+     //aca deberia ir
     await ProjectService.assignActivity(projectId, localStorage.getItem("userId"));
     await ProjectService.startActivity(projectId, localStorage.getItem("userId"));
+    await ProjectService.updateProject(projectId);
     handleShow();
     setModalMessage("La tarea fue avanzada.");
   };
@@ -216,10 +219,10 @@ export default function ChiefOfProject() {
                 projects.map((project) => (
                   <tr>
                     <td>{project.id}</td>
-                    <td>{(project.currentState === "iniciado" || project.currentState == null) && "Configurar protocolos"}</td>
+                    <td>{(project.currentState === "iniciado" || project.currentState == null) ? "Configurar protocolos":"Ejecutando"}</td>
                     <td>{formatDate(project.start)}</td>
                     <td>
-                      {(project.currentState === "iniciado" || project.currentState === null) ?
+                      {(project.currentState === "iniciado" || project.currentState == null) ?
                         <Button variant="info" size="sm" onClick={() => {
                           handleShowProtocols(); history.push(`/projects/${project.id}/protocols`);
                         }
@@ -239,24 +242,20 @@ export default function ChiefOfProject() {
 
                     <td>
                       {            
-                      ( project.currentState === "iniciado" || project.currentState === null )?
+                      ( project.currentState === "iniciado" || project.currentState == null )?
                         <Button variant="success" size="sm" onClick={() => startProject(project.id)}
                         disabled={disabledButton}
                         >
                           Finalizar Configuracion
                       </Button> :
-                        <Button variant="danger" size="sm" onClick={() => startProject(project.id)}
-                        disabled={disabledButton}
-                        >
-                          Cancelar proyecto
-                    </Button>
+                        "Proyecto iniciado"
                       }
                     </td>
                     <td>
                     <Button variant="danger" size="sm" onClick={() => deleteProject(project.id)}
                         disabled={disabledButton}
                         >
-                          Eliminar proyecto
+                          Cancelar proyecto
                           </Button>
                     </td>                   
                   </tr>

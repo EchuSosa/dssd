@@ -18,6 +18,17 @@ const getProjects = async (req, res) => {
   }
 };
 
+const setStatus = async (req,res) =>{
+  try{
+    const { parentCaseId }= req.body
+    const params = [{"status":"ejecutando"}]
+    const project = await model.Project.update(params[0], {where: {bonitaIdProject:parentCaseId}})
+    return res.status(200).json({ project });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
+
 
 const getProjectById = async (req, res) => {
   try {
@@ -116,6 +127,22 @@ const updateProject = async (req, res) => {
   }
 };
 
+const updateProjectByCaseId = async (req, res) => {
+  try {
+    const { caseId } = req.params;
+    const [updated] = await model.Project.update(req.body, {
+      where: { bonitaIdProject: caseId },
+    });
+    if (updated) {
+      const updatedProject = await model.Project.findOne({ where: { bonitaIdProject: caseId } });
+      return res.status(200).json({ project: updatedProject });
+    }
+    throw new Error("Project not found");
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
 const deleteProject = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,5 +177,7 @@ module.exports = {
   deleteProject,
   createBonitaProject,
   getStartedProjects,
-  getProjectsByUserIdAndProjectId
+  getProjectsByUserIdAndProjectId,
+  setStatus,
+  updateProjectByCaseId
 };

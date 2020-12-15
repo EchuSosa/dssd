@@ -118,6 +118,7 @@ const ResponsibleOfProtocol = () => {
             <tr>
               <th>Id</th>
               <th>Nombre</th>
+              <th>Orden</th>
               <th>Id Proyecto</th>
               <th>Estado</th>
               <th>Acción</th>
@@ -129,6 +130,7 @@ const ResponsibleOfProtocol = () => {
                 <tr>
                   <td>{protocol.id}</td>
                   <td>{protocol.name}</td>
+                  <td>{protocol.order}</td>
                   <td>{protocol.project_id}</td>
                   <td>{!protocol.started ? "Ready" : "Started"}</td>
                   <td>

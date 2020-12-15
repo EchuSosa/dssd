@@ -98,7 +98,8 @@ const deleteCase = async (req, res) => {
  */
 const restartProtocol = async (req, res) => {
   try {
-    const { idProtocol } = req.body
+    const { userId } = req.body
+    console.log(" ******* ENTRA A RESTARTEAR CON ------->"+userId)
     const response = await Protocol.restartProtocol(req,res);
     if (response) {
       return res.status(200).json({ status: "Protocol Restarted" });
@@ -174,7 +175,11 @@ const getCasesByUser = async (req, res) => {
       var id = response[key].id
       console.log("entro con el id "+id)
       project = await model.Project.findOne({
-        where: { bonitaIdProject: id },
+        where: { bonitaIdProject: id,
+          isLocal: {
+            [sequelize.Op.not]: 0
+          }
+         },
       });
       console.log("se trajo el proyecto"+project)
       if (!project) {
@@ -219,12 +224,9 @@ const startActivity = async (req, res) => {
     //await Bonita.updateTask(idActivity[0].id);
     console.log("hasta el start activity del controller llego")
     const response = await Bonita.advanceTask(parentCaseId,userId);
-    console.log("paso el await de advance task")
+    console.log("***************paso el await de advance task")
     if (response) {
       console.log("entro al if porque habia response en el startActivity")
-      const decision = "ejecutando"
-      const params = [{"state":"ejecutando"}]
-      await model.Project.update(params[0], {where: {id:parentCaseId}})
       return res.status(200).json();
     }
     console.log("no entro al if porque no habia noresponse en el startActivity")

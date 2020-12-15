@@ -63,10 +63,14 @@ const getProtocolsByProjectId = async (projectId) => {
   return response;
 };
 
-const restart = async (id) => {
+const restart = async (id, userId) => {
   const response = await axios
-    .put(`${API_URL}/bonita/protocol/${id}`)
+    .put(`${API_URL}/bonita/protocol/${id}`,
+    {
+      userId:userId
+    })
     .then((response) => {
+      
       return response;
     })
     .catch((error) => {

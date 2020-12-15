@@ -7,6 +7,7 @@ const { Op } = require("sequelize");
 const Bonita = require("../model/bonita");
 const heroku = "https://dssd-2020-lab.herokuapp.com/";
 const fetch = require("node-fetch");
+const bonita = "http://localhost:8080/bonita";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -177,10 +178,47 @@ const getRemoteValue = async (req, res) => {
     var  response  = await fetch(url)
       .then(async (res) => { return await res.json() });
     var protocol=response.protocol
+    var userId=response.protocol.user_id
+    var projectId=response.protocol.project_id
+
     console.log(JSON.stringify("UPDATEO EN HEROKU Y TRAJO-> "+JSON.stringify(protocol)))
     var params = [{"score":protocol.score, "executed":true}];
     protocol = await model.Protocol.update(params[0],{  where: { id: id } }   );
-    return res.status(500).json({ protocol });
+    //ver 
+    //return res.status(200).json({ protocol });
+    if (protocol) {
+      console.log("entro al if porque hay response en el approve")
+      //const protocolos = await getProtocolsByProjectId(projectId)
+      //cuento los que faltan
+      const cant = await model.Protocol.count({
+        where: {
+          [Op.and]: [{ project_id: projectId.toString() }, { executed: false }]
+        }
+      });
+  
+      console.log("la cuenta de los que faltan devolvio " + cant)
+  
+      if (cant == 0) {
+        console.log("entro al IF porque la cantidad que queda es 0")
+        console.log("el project id y user es:" + projectId + userId)
+        //aca pongo la logica para setear si quedan protos    
+        const decision = "ultimo"
+        await Bonita.setDecision(projectId, decision)
+        console.log("era el ultimo ")
+  
+      } else {
+        console.log("entro al porque la cantidad que queda es MAYOR A 0")
+        console.log("el project id y user es:" + projectId + userId)
+        await Bonita.assignActivity(projectId, userId)
+        console.log("paso el assign activity llamado del controller")
+        const decision = "continuar"
+        await Bonita.setDecision(projectId, decision)
+        console.log("paso el set decision llamado del controller")
+        console.log("paso el advance task ")
+  
+      }
+      return res.status(200).json(response);
+    }
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -264,6 +302,8 @@ const updateProtocol = async (req, res) => {
 const restartProtocol = async (req, res) => {
   try {
     const { idProtocol } = req.params;
+    const { userId } = req.body;
+    console.log("EL POLEMICO LLEGA CON -----------------------_>"+userId)
     var params = [{"score":null, "executed":false}];
     var protocol = await model.Protocol.update(params[0],{  where: { id: idProtocol } }   );   
     console.log("imprimer este proto"+protocol)
@@ -282,8 +322,24 @@ const restartProtocol = async (req, res) => {
         updatedProtocol = await model.Protocol.findOne({
           where: { id: idProtocol },
         });
+        await Bonita.reencolar(idProtocol,caseId,userId)
+        //codigo pa ver que hacemos si el loco quiere resetear un protocolo
+        var decision = await Bonita.getDecision(caseId)
+        console.log("pidio la decision y es "+decision)
+        if (decision == "ultimo"){
+          console.log("******************entro al if porque decision era ultimo")
+          decision = "continuar"
+          Bonita.setDecision(caseId,decision)
+          console.log("------------------sera este?-------------")
+          //aca no setea las variables de bonita
+          Bonita.advanceTask(caseId,userId)
+        }
+
         return res.status(200).json({ protocol: updatedProtocol });
+      }else{
+        console.log("entro por elseeeeeeeeeeeeeeeeeeeeeee..................................----")
       }
+
       
     }
     throw new Error("Protocol not found");
@@ -407,7 +463,7 @@ const approveProtocol = async (req, res) => {
       console.log("entro al IF porque la cantidad que queda es 0")
       console.log("el project id y user es:" + projectId + userId)
       //aca pongo la logica para setear si quedan protos    
-      const decision = "terminar"
+      const decision = "ultimo"
       await Bonita.setDecision(projectId, decision)
       await Bonita.advanceTask(projectId, userId)
       console.log("era el ultimo ")

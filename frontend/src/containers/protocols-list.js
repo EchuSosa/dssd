@@ -20,7 +20,8 @@ const ProtocolsList = (props) => {
   };
 
   const restartProtocol = async (idProtocol) => {
-    const response = await ProtocolService.restart(idProtocol);
+    const userId = localStorage.getItem("userId")
+    const response = await ProtocolService.restart(idProtocol,userId);
     console.log(response)
     alert("restarteado")
   };
