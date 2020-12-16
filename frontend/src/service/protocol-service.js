@@ -2,9 +2,21 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000";
 
-const getAll = async (id) => {
+const getAllByProjectId = async (id) => {
   const response = await axios
     .get(`${API_URL}/protocols/project/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getAll = async (id) => {
+  const response = await axios
+    .get(`${API_URL}/protocols`)
     .then((response) => {
       return response;
     })
@@ -96,6 +108,7 @@ const executeProtocol = async (id, projectId, score, userId) => {
 
 export default {
   getAll,
+  getAllByProjectId,
   createProtocol,
   getProtocolsByUser,
   executeProtocol,

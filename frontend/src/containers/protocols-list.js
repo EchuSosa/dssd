@@ -37,7 +37,9 @@ const ProtocolsList = (props) => {
   };
 
   const fetchData = async () => {
-    const { data } = await ProtocolService.getAll(props.match.params.id);
+    const { data } = await ProtocolService.getAllByProjectId(
+      props.match.params.id
+    );
     setProtocols(data.protocol);
     const currentProject = await ProjectService.getProjectByBonitaId(
       props.match.params.id
