@@ -14,7 +14,7 @@ export default function Monitoring() {
         </a>
         <a href="/projects/monitoring/query2">
           Proyectos que se encuentran en curso y con todos sus protocolos
-          aprobados (FALTA)
+          aprobados
         </a>
         <a href="/projects/monitoring/query3">
           Responsables de protocolos que más desaprobaron (FALTA)
