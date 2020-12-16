@@ -11,7 +11,7 @@ export default function Protocol({
   showModal,
 }) {
   const [name, setName] = useState("");
-  const [responsible, setResponsible] = useState("");
+  const [responsible, setResponsible] = useState(0);
   const [order, setOrder] = useState(0);
   const [isLocal, setIsLocal] = useState(false);
   const [startDate, setStartDate] = useState(null);
