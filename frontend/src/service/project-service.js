@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000";
 
-const getAll = async (id) => {
+const getAllByUser = async (id) => {
   const response = await axios
     .get(`${API_URL}/getActiveCases/${id}`)
     .then((response) => {
@@ -17,6 +17,18 @@ const getAll = async (id) => {
 const getProjectsByUserId = async (id) => {
   const response = await axios
     .get(`${API_URL}/bonita/projects/user/${id}`)
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return response;
+};
+
+const getProjects = async () => {
+  const response = await axios
+    .get(`${API_URL}/projects`)
     .then((response) => {
       return response;
     })
@@ -93,7 +105,6 @@ const assignActivity = async (parentCaseId, userId) => {
 };
 
 const createProject = async (name, endDate) => {
-  console.log(name, endDate);
   const response = await axios
     .post(`${API_URL}/createNewProject`, {
       name: name,
@@ -172,7 +183,7 @@ const updateProject = async (caseId) => {
 };
 
 export default {
-  getAll,
+  getAllByUser,
   startActivity,
   getProjectsByUserId,
   createProject,
@@ -185,4 +196,5 @@ export default {
   deleteProject,
   updateProject,
   getProjectByBonitaId,
+  getProjects,
 };

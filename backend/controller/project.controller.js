@@ -12,7 +12,7 @@ const pool = new Pool({
 const getProjects = async (req, res) => {
   try {
     const projects = await model.Project.findAll();
-    return res.status(200).json({ projects });
+    return res.status(200).json(projects);
   } catch (error) {
     return res.status(500).send(error.message);
   }

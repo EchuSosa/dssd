@@ -23,7 +23,7 @@ export default function ChiefOfProject() {
   };
 
   const getProjects = async () => {
-    const { data, status } = await ProjectService.getAll(
+    const { data, status } = await ProjectService.getAllByUser(
       localStorage.getItem("userId")
     );
     if (status === 200 && data) {
@@ -113,7 +113,7 @@ export default function ChiefOfProject() {
       setModalMessage(
         "Se ha finalizado la configuración del proyecto correctamente."
       );
-      const getAllProjects = await ProjectService.getAll(
+      const getAllProjects = await ProjectService.getAllByUser(
         localStorage.getItem("userId")
       );
       if (getAllProjects.status === 200 && getAllProjects.data) {
@@ -138,7 +138,6 @@ export default function ChiefOfProject() {
   return (
     <>
       <Navbar />
-
       <Modal show={showApprove} onHide={handleCloseApprove}>
         <Modal.Header closeButton>
           <Modal.Title>Aprobar proyecto</Modal.Title>

@@ -1,8 +1,10 @@
 import axios from "axios";
 
-export const getAll = async () => {
+const API_URL = "http://localhost:5000";
+
+const getAll = async () => {
   const response = await axios
-    .get("http://localhost:5000/projects")
+    .get(`${API_URL}/projects`)
     .then((response) => {
       return response;
     })
@@ -12,4 +14,6 @@ export const getAll = async () => {
   return response;
 };
 
-export default getAll;
+export default {
+  getAll,
+};
