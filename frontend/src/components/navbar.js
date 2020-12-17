@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { FaLaptopMedical } from 'react-icons/fa';
 import AuthService from "../service/auth-service";
 
@@ -35,16 +35,16 @@ class AppNavbar extends React.Component {
                 <Nav.Link href="/protocolexec">
                   Ejecución de protocolos
                 </Nav.Link>
-              )}
+              )}              
               <Nav.Link onClick={handleLogout} href="/">
                 Logout
               </Nav.Link>
             </Nav>
           ) : (
-            <Nav className="ml-auto">
-              <Nav.Link href="/">Login</Nav.Link>
-            </Nav>
-          )}
+              <Nav className="ml-auto">
+                <Nav.Link href="/">Login</Nav.Link>
+              </Nav>
+            )}
         </Navbar>
       </>
     );

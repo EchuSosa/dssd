@@ -101,7 +101,7 @@ const approveProject = async (projectId,userId) => {
     const response = await Bonita.setDecision(projectId,decision);    
     if (response) {
       response = await Bonita.advanceTask(projectId,userId);    
-      return res.status(200).json({ status: "Task advanced" });
+      return response;
     }
     return res.status(400).json({});
   } catch (e) {

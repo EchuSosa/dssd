@@ -47,27 +47,6 @@ const protocolIsApproved = (res, endDate) => {
   }
 };
 
-/* este metodo solo funciona con el jwt activado
-const getProtocols = async (req, res) => {
-  try {
-    const id = currentUser(req);
-    const protocols = await model.Protocol.findAll({
-      where: { user_id: id },
-    });
-
-    if (protocols.length === 0) {
-      return res.status(200).send({
-        message: "There are not protocols",
-      });
-    }
-
-    return res.status(200).json({ protocols });
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-};
-*/
-
 const getProtocols = async (req, res) => {
   try {
     const protocols = await model.Protocol.findAll();
@@ -148,14 +127,14 @@ const getProtocolsByProject = async (req, res) => {
 
 const executeRemoteProtocol = async (req, res) => {
   try {
-    const { id } = req.params;    
+    const { id } = req.params;
     const score = Math.floor(Math.random() * 11);
     const protocol = await model.Protocol.update(
       { endDate: Date.now(), score: score, executed: true },
       { where: { id: id } }
     );
     return res.status(200).json({ protocol });
-    
+
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -180,7 +159,7 @@ const getRemoteValue = async (req, res) => {
     var protocol = response.protocol;
     var userId = response.protocol.user_id;
     var projectId = response.protocol.project_id;
-    
+
     var params = [{ score: protocol.score, executed: true }];
     protocol = await model.Protocol.update(params[0], { where: { id: id } });
 
@@ -191,14 +170,14 @@ const getRemoteValue = async (req, res) => {
           [Op.and]: [{ project_id: projectId.toString() }, { executed: false }],
         },
       });
-      
 
-      if (cant == 0) {        
+
+      if (cant == 0) {
         //aca pongo la logica para setear si quedan protos
         const decision = "ultimo";
         await Bonita.setDecision(projectId, decision);
       } else {
-        
+
         await Bonita.assignActivity(projectId, userId);
         const decision = "continuar";
         await Bonita.setDecision(projectId, decision);
@@ -215,7 +194,7 @@ const createProtocol = async (req, res) => {
     if (req.body.isLocal == 1) {
       const protocol = await model.Protocol.create(req.body);
       return res.status(201).json({ protocol });
-    } else {      
+    } else {
       var url = heroku + "remote/protocols";
       const response = await fetch(url, {
         method: "POST",
@@ -246,7 +225,7 @@ const createProtocol = async (req, res) => {
         body: JSON.stringify(params[0]),
       }).then(async (res) => {
         return await res.json();
-      });      
+      });
       return res.status(201).json(protocol);
     }
   } catch (error) {
@@ -305,11 +284,11 @@ const restartProtocol = async (req, res) => {
         updatedProtocol = await model.Protocol.findOne({
           where: { id: idProtocol },
         });
-        
+
         //codigo pa ver que hacemos si el loco quiere resetear un protocolo
         var decision = await Bonita.getDecision(caseId);
         if (decision == "ultimo") {
-          await Bonita.reencolar(idProtocol, caseId, userId);          
+          await Bonita.reencolar(idProtocol, caseId, userId);
           decision = "continuar";
           Bonita.setDecision(caseId, decision);
           Bonita.advanceTask(caseId, userId);
@@ -330,16 +309,16 @@ const restartProtocol = async (req, res) => {
 
 const restartAllProtocolsByProject = async (req, res) => {
   try {
-    const  projectId  = req.params.id;
+    const projectId = req.params.id;
     const { userId } = req.body;
-    var params = [{ score: null, executed: false, started:false }];
+    var params = [{ score: null, executed: false, started: false }];
     var protocols = await model.Protocol.update(params[0], {
       where: { project_id: projectId },
     });
     if (protocols) {
       var updatedProtocols = await model.Protocol.findAll({
         where: { project_id: projectId },
-      });           
+      });
       return res.status(200).json();
     }
     throw new Error("Protocols not found");
@@ -405,7 +384,7 @@ const approveProtocol = async (req, res) => {
     { endDate: Date.now(), score: score, executed: true },
     { where: { id: id } }
   );
-  
+
 
   if (response) {
     //cuento los que faltan

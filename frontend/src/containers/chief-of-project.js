@@ -77,7 +77,10 @@ export default function ChiefOfProject() {
   const handleSubmitApprove = async (event) => {
     event.preventDefault();
     setShowApprove(false);
-    const  data  = await ProjectService.approveProject(proyectIdRegister,localStorage.getItem("userId"));
+    const data  = await ProjectService.approveProject(proyectIdRegister,localStorage.getItem("userId"));
+    setModalMessage("El proyecto ha sido aprobado correctamente.");
+    getProjects()
+    handleShow();
     if (data) {            
       getProjects()
       setModalMessage("El proyecto ha sido aprobado correctamente.");

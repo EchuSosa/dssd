@@ -11,7 +11,6 @@ import ProyectosEnCursoTodosProtocolosAprobados from "./containers/monitoring/Pr
 import ResponsablesProtocoloMasDesaprobaron from "./containers/monitoring/ResponsablesProtocoloMasDesaprobaron";
 import ProyectosEnCursoConProtocolosAtrasados from "./containers/monitoring/ProyectosEnCursoConProtocolosAtrasados";
 import Users from "./containers/users-list";
-
 import NotFoundPage from "./containers/not-found";
 
 class App extends React.Component {

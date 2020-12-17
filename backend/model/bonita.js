@@ -49,99 +49,11 @@ class Bonita {
     this.processDefinition = processDefinitionId;
   }
 
-  /*
-  static async completeGetProjects(params = {}) {
-    let variables = [];
-
-    let bonita = await Bonita.login();
-
-    await bonita.setProcess("Projects");
-
-    if (params.token) variables.push({ name: "token", value: params.token });
-
-    await bonita.newCase(variables);
-
-    return bonita;
-  }
-  
-
-  static async completeSell(params = {}) {
-    let variables = [];
-
-    let bonita = await Bonita.login();
-
-    await bonita.setProcess("Venta3");
-
-    if (!params.productid || !params.quantity || !params.caseid) return false;
-
-    variables.push({ name: "productid", value: params.productid });
-    variables.push({ name: "quantity", value: params.quantity });
-    variables.push({ name: "caseid", value: params.caseid });
-
-    if (params.token) variables.push({ name: "token", value: params.token });
-    if (params.coupon)
-      variables.push({ name: "couponnum", value: params.coupon });
-
-    await bonita.newCase(variables);
-
-    return bonita;
-  }
-  
-
-  async getProcesses() {
-    return await fetch(bonita + "/API/bpm/process?c=10&p=0", {
-      headers: this.headers,
-    }).then((res) => res.json());
-  }
-  
-
-  getProcess(name) {
-    return this.getProcesses().then((processes) =>
-      processes.find((p) => p.name === name)
-    );
-  }
-  */
-
   async getUserId(username) {
     return await fetch(`${bonita}/API/identity/user?f=userName=${username}`, {
       headers: this.headers,
     }).then((res) => res.json());
   }
-
-  /*
-  async getCases() {
-    return await fetch(bonita + "/API/bpm/case?p=0&c=10", {
-      headers: this.headers,
-    }).then((res) => res.json());
-  }
-
-  async getUserTasks(id) {
-    return fetch(`${bonita}/API/bpm/humanTask/${id}`, {
-      headers: this.headers,
-    }).then((res) => res.json());
-  }
-
- 
-  setProcess(name) {
-    this.process = this.getProcess(name).id;
-  }
-  
-
-  postCase(params) {
-    return fetch(bonita + "/API/bpm/case", {
-      headers: this.headers,
-      method: "POST",
-      body: JSON.stringify({
-        processDefinitionId: this.process,
-        variables: params,
-      }),
-    }).then((res) => res.json());
-  }
-
-  async newCase(params = []) {
-    this.case = (await this.postCase(params)).id;
-  }
-  */
 
   /**
    * @echu
@@ -198,7 +110,7 @@ class Bonita {
 
 
   }
-  
+
   async updateTask(id) {
     try {
       return await fetch(`${bonita}/API/bpm/activity/${id}`, {
@@ -307,7 +219,7 @@ class Bonita {
         headers: this.headers,
       }
     ).then((res) => res.json());
-    
+
     return response;
   }
 
@@ -355,7 +267,7 @@ class Bonita {
   async assignActivity(parentCaseId, userId) {
     try {
 
-        //------------------Codigo para obtener el siguiente protocolo--------------------
+      //------------------Codigo para obtener el siguiente protocolo--------------------
       var response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden', { headers: this.headers }
       ).then((res) => res.json());
       var currentOrder = response.value
@@ -405,7 +317,7 @@ class Bonita {
       //----------------------------------------fin setear ord ejecc-------------------------------------------
       //--------------------------------------codigo para cambiar estado protocolo a active---------------------
       params = [{ 'started': 'true' }]
-      
+
 
       var updated = model.Protocol.update(
         { started: true },
@@ -415,7 +327,7 @@ class Bonita {
       if (!updated) {
         console.log("entro al if porque no updateo" + updated)
         return updated;
-      };      
+      };
       return updated;
     } catch (e) { console.log(e) }
 
@@ -512,63 +424,63 @@ class Bonita {
       var updatedProtocol = await model.Protocol.findOne({
         where: { id: idProtocol },
       });
-      if(updatedProtocol){
-       
-      //-------------------------------Codigo para setear el primer protocolo en bonita--------------
-      var params = [{ 'value': idProtocol, 'type': 'java.lang.Long' }]
-      var response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/id_protocol',
-        {
-          method: 'PUT',
-          headers: this.headers,
-          body: JSON.stringify(params[0])
-        }
-      ).then();
-      //----------------------------------------fin set primer prot-------------------------------------------
-      //-------------------------------Codigo para setear si se ejecuta local en bonita--------------
-      if (updatedProtocol.isLocal == 0) { //chequear si funciona bien.
-        var tipejec = "false"
-      } else {
-        var tipejec = "true"
-      }
-      params = [{ 'value': tipejec, 'type': 'java.lang.Boolean' }]
-      response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/local',
-        {
-          method: 'PUT',
-          headers: this.headers,
-          body: JSON.stringify(params[0])
-        }
-      ).then();
-      //----------------------------------------fin setear tip ejecc-------------------------------------------
-      //-------------------------------Codigo para setear el orden de ejec en bonita--------------
-      params = [{ 'value': updatedProtocol.order, 'type': 'java.lang.Long' }]
-      response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/currentOrden',
-        {
-          method: 'PUT',
-          headers: this.headers,
-          body: JSON.stringify(params[0])
-        }
-      ).then();
-      //----------------------------------------fin setear ord ejecc-------------------------------------------
-      //--------------------------------------codigo para cambiar estado protocolo a active---------------------
-      params = [{ 'started': 'true' }]
-      var updated = model.Protocol.update(
-        { started: true },
-        { where: { id: idProtocol } }
-      )
+      if (updatedProtocol) {
 
-      if (!updated) {
-        console.log("entro al if porque no updateo" + updated)
-        console.log("--------------------*************FINISH malo*******************------------------")
-        console.log()
-        console.log()
+        //-------------------------------Codigo para setear el primer protocolo en bonita--------------
+        var params = [{ 'value': idProtocol, 'type': 'java.lang.Long' }]
+        var response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/id_protocol',
+          {
+            method: 'PUT',
+            headers: this.headers,
+            body: JSON.stringify(params[0])
+          }
+        ).then();
+        //----------------------------------------fin set primer prot-------------------------------------------
+        //-------------------------------Codigo para setear si se ejecuta local en bonita--------------
+        if (updatedProtocol.isLocal == 0) { //chequear si funciona bien.
+          var tipejec = "false"
+        } else {
+          var tipejec = "true"
+        }
+        params = [{ 'value': tipejec, 'type': 'java.lang.Boolean' }]
+        response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/local',
+          {
+            method: 'PUT',
+            headers: this.headers,
+            body: JSON.stringify(params[0])
+          }
+        ).then();
+        //----------------------------------------fin setear tip ejecc-------------------------------------------
+        //-------------------------------Codigo para setear el orden de ejec en bonita--------------
+        params = [{ 'value': updatedProtocol.order, 'type': 'java.lang.Long' }]
+        response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/currentOrden',
+          {
+            method: 'PUT',
+            headers: this.headers,
+            body: JSON.stringify(params[0])
+          }
+        ).then();
+        //----------------------------------------fin setear ord ejecc-------------------------------------------
+        //--------------------------------------codigo para cambiar estado protocolo a active---------------------
+        params = [{ 'started': 'true' }]
+        var updated = model.Protocol.update(
+          { started: true },
+          { where: { id: idProtocol } }
+        )
+
+        if (!updated) {
+          console.log("entro al if porque no updateo" + updated)
+          console.log("--------------------*************FINISH malo*******************------------------")
+          console.log()
+          console.log()
+          return updated;
+        };
         return updated;
-      };      
-      return updated;
 
-    }else{
+      } else {
         return false;
       }
-      
+
 
 
     } catch (e) {

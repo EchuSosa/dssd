@@ -1,7 +1,6 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
-import { FaLaptopMedical } from 'react-icons/fa';
-import AuthService from "../service/auth-service";
+import { FaCodeBranch, FaGraduationCap,FaLaptopCode } from 'react-icons/fa';
 
 class AppNavbar extends React.Component {
   render() {    
@@ -11,9 +10,12 @@ class AppNavbar extends React.Component {
          <div className="fixed-bottom " >  
             <Navbar bg="secondary" variant="secondary">
                 
-                    <Navbar.Brand className='m-auto' style={{"color":"white"}}> DESARROLLO DE SOFTWARE EN SISTEMAS DISTRIBUIDOS 2020  </Navbar.Brand>
-                    <Navbar.Brand className='m-auto' style={{"color":"white"}}>  GRUPO 1  </Navbar.Brand>
-                    <Navbar.Brand className='m-auto' style={{"color":"white"}}> FARAONE CAMILA - SOSA ESTER - BELLINO FRANCO </Navbar.Brand>
+                    <Navbar.Brand className='m-auto' style={{"color":"white","font-size":"14px"}}>
+                    <FaGraduationCap color="white" size={25} /> DSSD-2020  </Navbar.Brand>
+                    <Navbar.Brand className='m-auto' style={{"color":"white","font-size":"14px"}}>
+                    <FaCodeBranch color="white" size={25} /> GRUPO 1  </Navbar.Brand>
+                    <Navbar.Brand className='m-auto' style={{"color":"black","font-size":"14px"}}>
+                    <FaLaptopCode color="white" size={25} /> [ Faraone Camila -  Sosa Ester - Bellino Franco  ] </Navbar.Brand>
 
             </Navbar>
         </div>
