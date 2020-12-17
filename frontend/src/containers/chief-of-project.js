@@ -193,7 +193,7 @@ export default function ChiefOfProject() {
           </Button>
         </Form>
         <div className="mt-5">
-          <h3>Proyectos creados</h3>
+          <h3>Proyectos activos</h3>
           <Table striped bordered hover size="lg">
             <thead>
               <tr>
@@ -276,7 +276,7 @@ export default function ChiefOfProject() {
         </div>
 
         <div className="mt-5">
-          <h3>Proyectos listos para verificar</h3>
+          <h3>Proyectos esperando aprobación</h3>
           <Table striped bordered hover size="lg">
             <thead>
               <tr>
@@ -289,7 +289,7 @@ export default function ChiefOfProject() {
               {projects.length > 0 &&
                 projects
                   .filter(function (project) {
-                    return project.currentState == "esperando aprobacion";
+                    return project.currentDecision == "ultimo";
                   })
                   .map((project) => (
                     <tr>

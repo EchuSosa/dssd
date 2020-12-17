@@ -344,11 +344,12 @@ const restartProtocol = async (req, res) => {
         updatedProtocol = await model.Protocol.findOne({
           where: { id: idProtocol },
         });
-        await Bonita.reencolar(idProtocol, caseId, userId);
+        
         //codigo pa ver que hacemos si el loco quiere resetear un protocolo
         var decision = await Bonita.getDecision(caseId);
         console.log("pidio la decision y es " + decision);
         if (decision == "ultimo") {
+          await Bonita.reencolar(idProtocol, caseId, userId);
           console.log(
             "******************entro al if porque decision era ultimo"
           );

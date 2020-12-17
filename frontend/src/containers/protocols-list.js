@@ -67,7 +67,7 @@ const ProtocolsList = (props) => {
       const lastname = userResponsible[0].lastname;
       return `${firstname} ${lastname}`;
     } else {
-      return "Nombre no disponible";
+      return "Responsable remoto";
     }
   };
 

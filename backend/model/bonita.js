@@ -376,21 +376,7 @@ class Bonita {
     try {
       console.log("assign activity del model de bonita con-> " + parentCaseId + "/" + userId)
 
-      //------------------Codigo para obtener el id projecto de nuestro back--------------------
-      /*
-      console.log("comienza el codigo para obtener el id de proyecto en nuestro back")
-      var response = await model.Project.findOne({
-        where: { bonitaIdProject: parentCaseId}
-      });
-      if (!response) {
-        console.log("entro al if porque no existe el proyecto")
-        return res.status(500).json(res);
-      }
-      console.log("no entro al if porque  existe el proyecto ->" +response)
-      var idProjectBackend = response.id;
-      */
-      //-------------------------------fin codigo id proj--------------------------------------------
-      //------------------Codigo para obtener el siguiente protocolo--------------------
+        //------------------Codigo para obtener el siguiente protocolo--------------------
       var response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden', { headers: this.headers }
       ).then((res) => res.json());
       console.log("la response que trae el current orden es" + response)
@@ -582,7 +568,11 @@ class Bonita {
 
   async reencolar(idProtocol, caseId, userId) {
     try {
-      //-------------------------------------------MAMBO PARA ASIGNAR VARIABLES DE BONITA----------------------------------------------- 
+      var updatedProtocol = await model.Protocol.findOne({
+        where: { id: idProtocol },
+      });
+      if(updatedProtocol){
+        //-------------------------------------------MAMBO PARA ASIGNAR VARIABLES DE BONITA----------------------------------------------- 
       console.log("--------------------********************************------------------")
       console.log()
       console.log()
@@ -599,10 +589,13 @@ class Bonita {
       console.log("paso la request para setear el id_protocol -> " + response)
       //----------------------------------------fin set primer prot-------------------------------------------
       //-------------------------------Codigo para setear si se ejecuta local en bonita--------------
-      if (parseInt(updatedProtocol.isLocal, 10) === 0) { //chequear si funciona bien
+      if (updatedProtocol.isLocal == 0) { //chequear si funciona bien.
+        console.log("-----------------------ENTRO AL TRUEEEEE es 0")
         var tipejec = "false"
       } else {
         var tipejec = "true"
+        console.log("-----------------------ENTRO AL FALSE es 1")
+
       }
       params = [{ 'value': tipejec, 'type': 'java.lang.Boolean' }]
       console.log("seteo estos params para el tipo de ejecuccion en bonita-> " + JSON.stringify(params[0]))
@@ -648,7 +641,11 @@ class Bonita {
       console.log()
       console.log()
       return updated;
-      //--------------------------------------------------------------------------------------------------------------------------------
+      //---------------
+      }else{
+        return false;
+      }
+      
 
 
     } catch (e) {
