@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { FaEye, FaPowerOff, FaPlusCircle, FaRedoAlt, FaPlayCircle,FaCheckSquare, FaCheck } from 'react-icons/fa';
 import { useHistory } from "react-router-dom";
 import { Form, Button, Table, Modal } from "react-bootstrap";
 import ProjectService from "../service/project-service";
 import "./Chief.css";
 import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 
 export default function ChiefOfProject() {
   const [name, setName] = useState("");
@@ -57,6 +59,7 @@ export default function ChiefOfProject() {
       );
       event.target.reset();
       if (status === 200 && data) {
+        getProjects()
         setProjects((projects) => [...projects, data]);
         handleShow();
         setModalMessage("El proyecto ha sido creado correctamente.");
@@ -75,8 +78,8 @@ export default function ChiefOfProject() {
     event.preventDefault();
     setShowApprove(false);
     const  data  = await ProjectService.approveProject(proyectIdRegister,localStorage.getItem("userId"));
-    if (data) {      
-      setModalMessage("El protocolo ha sido aprobado correctamente.");
+    if (data) {            
+      setModalMessage("El proyecto ha sido aprobado correctamente.");
       handleShow();
     } else {
       setModalMessage(
@@ -230,128 +233,141 @@ export default function ChiefOfProject() {
         </Form>
         <div className="mt-5">
           <h3>Proyectos activos</h3>
-          <Table striped bordered hover size="lg">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Estado</th>
-                <th>Fecha de creación</th>
-                <th>Protocolos</th>
-                <th>Accion</th>
-                <th>Eliminar</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.length > 0 &&
-                projects.map((project) => (
-                  <tr>
-                    <td>{project.id}</td>
-                    <td>
-                      {project.currentState === "iniciado" ||
-                      project.currentState == null
-                        ? "Configurar protocolos"
-                        : "Ejecutando"}
-                    </td>
-                    <td>{formatDate(project.start)}</td>
-                    <td>
-                      {project.currentState === "iniciado" ||
-                      project.currentState == null ? (
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => {
-                            handleShowProtocols();
-                            history.push(`/projects/${project.id}/protocols`);
-                          }}
-                        >
-                          Cargar Protocolos
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="dark"
-                          size="sm"
-                          onClick={() => {
-                            handleShowProtocols();
-                            history.push(`/projects/${project.id}/protocols`);
-                          }}
-                        >
-                          Revisar protocolos
-                        </Button>
-                      )}
-                    </td>
 
-                    <td>
-                      {project.currentState === "iniciado" ||
-                      project.currentState == null ? (
-                        <Button
-                          variant="success"
-                          size="sm"
-                          onClick={() => startProject(project.id)}
-                          disabled={disabledButton}
-                        >
-                          Finalizar Configuracion
-                        </Button>
-                      ) : (
-                        <Button
-                        variant="info"
-                        size="sm"
-                        onClick={() => handleShowRestart(project.id)}
-                      >
-                        Reiniciar proyecto
-                      </Button>
-                      )}
-                    </td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => deleteProject(project.id)}
-                        disabled={disabledButton}
-                      >
-                        Cancelar proyecto
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </Table>
+          { projects.length > 0 ? 
+                    <Table striped bordered hover size="lg">
+                    <thead>
+                      <tr>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >ID</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Nombre</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Estado</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Fecha de creación</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Protocolos</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Accion</th>
+                      <th style={{"text-align": "center","vertical-align":"middle"}} >Cancelar</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {projects.length > 0 &&
+                        projects.map((project) => (
+                          <tr>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{project.id}</td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{project.name}</td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>
+                              {project.currentState === "iniciado" ||
+                              project.currentState == null
+                                ? "Configurar"
+                                : "Ejecutando"}
+                            </td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{formatDate(project.start)}</td>
+                            <td style={{"text-align": "left","vertical-align":"middle"}}>
+                              {project.currentState === "iniciado" ||
+                              project.currentState == null ? (
+                                <Button
+                                  variant="info"
+                                  size="sm"
+                                  onClick={() => {
+                                    handleShowProtocols();
+                                    history.push(`/projects/${project.id}/protocols`);
+                                  }}
+                                >
+                                <FaPlusCircle color="white" size={20} />  Cargar 
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="dark"
+                                  size="sm"
+                                  onClick={() => {
+                                    handleShowProtocols();
+                                    history.push(`/projects/${project.id}/protocols`);
+                                  }}
+                                >
+                                  <FaEye color="white" size={20} /> Revisar 
+                                </Button>
+                              )}
+                            </td>
+        
+                            <td style={{"text-align": "left","vertical-align":"middle"}}>
+                              {project.currentState === "iniciado" ||
+                              project.currentState == null ? (
+                                <Button
+                                  variant="success"
+                                  size="sm"
+                                  onClick={() => startProject(project.id)}
+                                  disabled={disabledButton}
+                                >
+                                <FaPlayCircle color="white" size={20} />  Finalizar Configuracion
+                                </Button>
+                              ) : (
+                                <Button
+                                variant="info"
+                                size="sm"
+                                onClick={() => handleShowRestart(project.id)}
+                              >
+                              <FaRedoAlt color="white" size={20} />  Reiniciar proyecto
+                              </Button>
+                              )}
+                            </td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => deleteProject(project.id)}
+                                disabled={disabledButton}
+                              >
+                                <FaPowerOff color="white" size={20} /> 
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+          : "Actualmente no se esta ejecutando ningun proyecto" }
+
         </div>
 
         <div className="mt-5">
           <h3>Proyectos esperando aprobación</h3>
-          <Table striped bordered hover size="lg">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Fecha de creación</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {projects.length > 0 &&
-                projects
-                  .filter(function (project) {
+
+          {projects.length > 0 &&  projects.filter(function (project) {
                     return project.currentDecision == "ultimo";
-                  })
-                  .map((project) => (
+                  }).length > 0 ? <Table striped bordered hover size="lg">
+                  <thead>
                     <tr>
-                      <td>{project.id}</td>
-                      <td>{formatDate(project.start)}</td>
-                      <td>
-                        <Button
-                          variant="info"
-                          size="sm"
-                          onClick={() => handleShowApprove(project.id)}
-                        >
-                          Aprobar proyecto
-                        </Button>
-                      </td>
+                    <th style={{"text-align": "center","vertical-align":"middle"}} >ID</th>
+                    <th style={{"text-align": "center","vertical-align":"middle"}} >Nombre</th>
+                    <th style={{"text-align": "center","vertical-align":"middle"}} >Fecha de creación</th>
+                    <th style={{"text-align": "center","vertical-align":"middle"}} >Acción</th>
                     </tr>
-                  ))}
-            </tbody>
-          </Table>
+                  </thead>
+                  <tbody>
+                    {projects.length > 0 &&
+                      projects
+                        .filter(function (project) {
+                          return project.currentDecision == "ultimo";
+                        })
+                        .map((project) => (
+                          <tr>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{project.id}</td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{project.name}</td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>{formatDate(project.start)}</td>
+                            <td style={{"text-align": "center","vertical-align":"middle"}}>
+                              <Button
+                                variant="info"
+                                size="sm"
+                                onClick={() => handleShowApprove(project.id)}
+                              >
+                              <FaCheck color="white" size={20} />  Aprobar proyecto
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                  </tbody>
+                </Table> : "No hay proyectos esperando aprobacion" }
+          
         </div>
       </div>
+      <Footer />
     </>
   );
 }

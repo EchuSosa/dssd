@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Modal, Button, Form } from "react-bootstrap";
+import { FaBolt } from 'react-icons/fa';
 
 import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 import "./Protocol.css";
 import ProtocolService from "../service/protocol-service";
 import ProjectService from "../service/project-service";
@@ -121,43 +123,47 @@ const ResponsibleOfProtocol = () => {
           </Modal.Footer>
         </Modal>
         <h3>Protocolos disponibles para ejecutar</h3>
+        { protocols.length > 0 ? 
         <Table striped bordered hover size="sm">
-          <thead>
-            <tr>
-              <th>Id</th>
-              <th>Nombre</th>
-              <th>Orden</th>
-              <th>Id Proyecto</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {protocols.length > 0 &&
-              protocols.map((protocol) => (
-                <tr>
-                  <td>{protocol.id}</td>
-                  <td>{protocol.name}</td>
-                  <td>{protocol.order}</td>
-                  <td>{protocol.project_id}</td>
-                  <td>{!protocol.started ? "Ready" : "Started"}</td>
-                  <td>
-                    {!protocol.executed && (
-                      <Button
-                        variant="danger"
-                        onClick={() =>
-                          handleShow(protocol.id, protocol.project_id)
-                        }
-                      >
-                        Ejecutar
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </Table>
+        <thead>
+          <tr>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Id</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Nombre</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Orden</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Id Proyecto</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Estado</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {protocols.length > 0 &&
+            protocols.map((protocol) => (
+              <tr>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.id}</td>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.name}</td>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.order}</td>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.project_id}</td>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>{!protocol.started ? "Ready" : "Started"}</td>
+                <td style={{"text-align": "center","vertical-align":"middle"}}>
+                  {!protocol.executed && (
+                    <Button
+                      variant="danger"
+                      onClick={() =>
+                        handleShow(protocol.id, protocol.project_id)
+                      }
+                    >
+                    <FaBolt color="white" size={20} />  Ejecutar
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+       : "No hay protocolos para ejecutar" }
+        
       </div>
+      <Footer />
     </>
   );
 };

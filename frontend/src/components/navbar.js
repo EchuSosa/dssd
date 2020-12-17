@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
-
+import { FaLaptopMedical } from 'react-icons/fa';
 import AuthService from "../service/auth-service";
 
 class AppNavbar extends React.Component {
@@ -20,7 +20,7 @@ class AppNavbar extends React.Component {
     return (
       <>
         <Navbar bg="dark" variant="dark">
-          <Navbar.Brand href="/">DSSD - Grupo 1</Navbar.Brand>
+          <Navbar.Brand href="/"><FaLaptopMedical color="white" size={40} />  Gestion de Laboratorio</Navbar.Brand>
           {uid ? (
             <Nav className="ml-auto">
               {jobTitle === "Jefe de Proyecto" && (

@@ -188,7 +188,7 @@ const getCasesByUser = async (req, res) => {
   try {
     arr = []
     var project;
-    var params;
+    var state, name;
     const { idUser } = req.params;
     const response = await Bonita.getActiveCases(idUser);
     
@@ -202,16 +202,19 @@ const getCasesByUser = async (req, res) => {
       });
       console.log("se trajo el proyecto"+project)
       if (!project) {
-        status = 'iniciado'
+        state = 'iniciado'
+        name = 'Nuevo'
         console.log("entro al fin porque no encontro proyecto")        
       }else{
-        status = project.status
+        state = project.status
+        name = project.name
       }
       const decision = await Bonita.getDecision(id)
       console.log("-----------------------------TRAJO ESTA DECISION ----->"+decision)
-      console.log("no entro al fin porque encontro proyecto, el estado es"+status)
-      response[key]["currentState"] = status;
+      console.log("no entro al fin porque encontro proyecto, el estado es"+state)
+      response[key]["currentState"] = state;
       response[key]["currentDecision"] = decision;
+      response[key]["name"] = name;
       arr.push(response[key])
 
 

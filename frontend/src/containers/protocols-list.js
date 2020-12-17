@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Table, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import ProtocolService from "../service/protocol-service";
-
+import { FaTrashAlt, FaRedo } from 'react-icons/fa';
 import Navbar from "../components/navbar";
+import Footer from "../components/footer";
 import Protocol from "./protocol";
 import ProjectService from "../service/project-service";
 import getAll from "../service/user-service";
@@ -121,53 +122,66 @@ const ProtocolsList = (props) => {
             </Button>
           )}
         </div>
-        <Table striped bordered hover size="sm">
+        { protocols.length > 0 ? <Table striped bordered hover size="sm">
           <thead>
             <tr>
-              <th>Id</th>
-              <th>Nombre</th>
-              <th>Responsable</th>
-              <th>Orden</th>
-              <th>Lugar de ejeccucion</th>
-              <th>Puntaje</th>
-              <th>Accion</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Id</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Nombre</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Responsable</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Orden</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Lugar de ejeccucion</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Puntaje</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Reiniciar</th>
+            <th style={{"text-align": "center","vertical-align":"middle"}} >Eliminar</th>
             </tr>
           </thead>
           <tbody>
             {protocols.length > 0 &&
               protocols.map((protocol) => (
                 <tr>
-                  <td>{protocol.id}</td>
-                  <td>{protocol.name}</td>
-                  <td>{getResponsibleName(protocol.user_id)}</td>
-                  <td>{protocol.order}</td>
-                  <td>{protocol.isLocal == 1 ? "Local" : "Remoto"}</td>
-                  <td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.id}</td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.name}</td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>{getResponsibleName(protocol.user_id)}</td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.order}</td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>{protocol.isLocal == 1 ? "Local" : "Remoto"}</td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>
                     {protocol.score == null ? "Sin puntaje" : protocol.score}
                   </td>
-                  <td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>
                     {protocol.score !== null ? (
                       <Button
                         variant="danger"
                         size="sm"
                         onClick={() => restartProtocol(protocol.id)}
                       >
-                        Reiniciar ejecuccion
+                        <FaRedo color="white" size={20} />
                       </Button>
                     ) : (
                       ""
                     )}
                   </td>
+                  <td style={{"text-align": "center","vertical-align":"middle"}}>
+                  <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => restartProtocol(protocol.id)}
+                      >
+                        <FaTrashAlt color="white" size={20} />
+                      </Button>
+                  
+                  </td>
                 </tr>
               ))}
           </tbody>
-        </Table>
+        </Table> : "Aun no se cargaron protocolos"}
+        
         <div className="goBack">
           <Button variant="link" onClick={goBack}>
             Volver a los proyectos
           </Button>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
