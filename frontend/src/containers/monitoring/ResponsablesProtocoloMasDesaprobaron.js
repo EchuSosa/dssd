@@ -9,6 +9,15 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
   const [responsibles, setResponsibles] = useState([]);
   const [users, setUsers] = useState([]);
 
+  const usuarios = (id) => {
+    const allUsers = {
+      1: "Echu Sosa",
+      2: "Cami Faraone",
+      3: "Fran Bellino",
+    };
+    return allUsers[id];
+  };
+
   const getUsers = async (event) => {
     const { data, status } = await getAll();
     if (data && status === 200) {
@@ -18,12 +27,21 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
     }
   };
 
+  /*
   const getUserName = (id) => {
-    const user = users.filter((user) => user.id === id);
+    const user = users.map((user) => {
+      if (user.id === id) {
+        return user.firstname + "" + user.lastname;
+      } else {
+        console.log("Error");
+      }
+    });
+    console.log(user);
     if (user.length > 0) {
       return user[0].firstname + " " + user[0].lastname;
     } else console.log("Error user");
   };
+*/
 
   const getProjects = async () => {
     const { data } = await ProtocolService.getAll();
@@ -45,7 +63,7 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
           ...responsibles,
           {
             id: key,
-            name: getUserName(key) ? getUserName(key) : "Camila Faraone",
+            name: usuarios(key),
             value: result[key],
           },
         ]);
