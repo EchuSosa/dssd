@@ -72,14 +72,14 @@ const getProtocols = async (req, res) => {
   try {
     const protocols = await model.Protocol.findAll();
     if (protocols.length === 0) {
-      return res.status(200).send({
+      return res.status(200).json({
         message: "There are not protocols",
       });
     }
 
-    return res.status(200).json({ protocols });
+    return res.status(200).json(protocols);
   } catch (error) {
-    return res.status(500).send(error.message);
+    return res.status(500).json(error.message);
   }
 };
 
