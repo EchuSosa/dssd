@@ -6,17 +6,23 @@ import Navbar from "../../components/navbar";
 import "../Project.css";
 
 export default function ResponsablesProtocoloMasDesaprobaron() {
-  const [projects, setProjects] = useState([]);
+  const [responsibles, setResponsibles] = useState([]);
   const [users, setUsers] = useState([]);
 
-  const getUsers = async () => {
-    const response = await getAll();
-    setUsers(response.data);
+  const getUsers = async (event) => {
+    const { data, status } = await getAll();
+    if (data && status === 200) {
+      setUsers(data);
+    } else {
+      console.log("Error al traer usuarios");
+    }
   };
 
   const getUserName = (id) => {
     const user = users.filter((user) => user.id === id);
-    return user[0].firstname + " " + user[0].lastname;
+    if (user.length > 0) {
+      return user[0].firstname + " " + user[0].lastname;
+    } else console.log("Error user");
   };
 
   const getProjects = async () => {
@@ -25,17 +31,25 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
       const rejectedProtocols = data.filter(
         (element) => element.score !== null && element.score < 5
       );
-      let cant = 1;
       const result = rejectedProtocols.reduce(function (r, a) {
-        r[a.user_id] = r[a.user_id] || [];
-        r[a.user_id] = cant++;
+        //r[a.user_id] = r[a.user_id] || [];
+        //r[a.user_id].push(a);
+        r[a.user_id] = (r[a.user_id] || 0) + +1;
         return r;
       }, Object.create(null));
-      let nuevo = [];
-      for (const prop in result) {
-        nuevo.push(`${prop} : ${result[prop]}`);
+
+      //Object.entries(result).map(([key, value]) => console.log(key, value));
+
+      for (const key in result) {
+        setResponsibles((responsibles) => [
+          ...responsibles,
+          {
+            id: key,
+            name: getUserName(key) ? getUserName(key) : "Cami Faraone",
+            value: result[key],
+          },
+        ]);
       }
-      console.log(nuevo);
     } else {
       console.log("Error");
     }
@@ -61,20 +75,18 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
           <thead>
             <tr>
               <th>Id</th>
-              <th>Case Id</th>
               <th>Nombre</th>
-              <th>Estado</th>
+              <th>Cantidad</th>
             </tr>
           </thead>
           <tbody>
-            {projects &&
-              projects.length > 0 &&
-              projects.map((project) => (
+            {responsibles &&
+              responsibles.length > 0 &&
+              responsibles.map((responsible) => (
                 <tr>
-                  <td>{project.id}</td>
-                  <td>{project.caseId}</td>
-                  <td>{project.name}</td>
-                  <td>{project.status}</td>
+                  <td>{responsible.id}</td>
+                  <td>{responsible.name}</td>
+                  <td>{responsible.value}</td>
                 </tr>
               ))}
           </tbody>
