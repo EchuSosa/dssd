@@ -2,7 +2,7 @@ const { Pool } = require("pg");
 const model = require("../database/models/Index");
 const Bonita = require("./bonita.controller");
 const bonita = require("../model/bonita");
-
+const bonita_url = "http://localhost:8080/bonita";
 const Protocol = require("./protocol.controller");
 
 const pool = new Pool({
@@ -33,14 +33,14 @@ const setStatus = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
-const setStatusIniciado = async (req, res) => {
+const setStatusIniciado = async (req,res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params
     const params = [{ status: "iniciado" }];
     const project = await model.Project.update(params[0], {
       where: { bonitaIdProject: id },
     });
-    return res.status(200).json({ project });
+    return res.status(200);
   } catch (error) {
     return res.status(500).send(error.message);
   }
@@ -222,12 +222,22 @@ const restartProject = async (req, res) => {
   try {
     const { id } = req.params
     const { userId } = req.body
-    console.log("llego al restart case del project controller con "+id+"//"+req.body.parentCaseId)
+    console.log("llego al restart case del project controller con "+id+"//"+userId)
     var response = await Protocol.restartAllProtocolsByProject(req, res);
-    response = setStatusIniciado(req,res)
     console.log("salio del restart con-> "+response)
-    if (response) {
-        console.log("entro con esta response al if -> "+response)
+    await setStatusIniciado(req,res)
+    console.log("sadsd")
+    //-------------------------------Codigo para setear el orden de ejec en bonita--------------
+    var minOrder = await model.Protocol.min("order", {
+        where: { project_id: id },
+      });
+    minOrder = minOrder-1
+    console.log("***********************seteo estos params para el orden de ejecuccion en bonita RESTART PROOOOO-> " + minOrder)
+    const response2 = await bonita.setOrder(id, minOrder)
+    console.log("******************paso la request para setear el orden de ejecuccion RESTART PROOOOO-> " + response2)
+
+    if (response2) {
+        console.log("entro con esta response al if -> "+response2)
         const decision = "reiniciar"
         response = await bonita.setDecision(id,decision);
         console.log("cuando setea la decision response "+response)

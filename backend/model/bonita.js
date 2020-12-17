@@ -490,6 +490,20 @@ class Bonita {
     console.log("paso la request para setear la decision -> " + response)
     return response;
   }
+  async setOrder(parentCaseId, orden) {
+    console.log("-----------------------entro al set order con->" + parentCaseId + "/" + orden)
+    var params = [{ 'value': orden.toString(), 'type': 'java.lang.Long' }]
+    console.log("setea estos params para la decision-> " + JSON.stringify(params[0]))
+    const response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden',
+      {
+        method: 'PUT',
+        headers: this.headers,
+        body: JSON.stringify(params[0])
+      }
+    ).then();
+    console.log("paso la request para setear el orden -> " + response)
+    return response;
+  }
 
   async getDecision(parentCaseId) {
     console.log("entro al model bonita get decision con->" + parentCaseId)

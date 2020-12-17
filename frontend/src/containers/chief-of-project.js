@@ -79,6 +79,7 @@ export default function ChiefOfProject() {
     setShowApprove(false);
     const  data  = await ProjectService.approveProject(proyectIdRegister,localStorage.getItem("userId"));
     if (data) {            
+      getProjects()
       setModalMessage("El proyecto ha sido aprobado correctamente.");
       handleShow();
     } else {
@@ -94,6 +95,7 @@ export default function ChiefOfProject() {
     setShowRestart(false);
     const  data  = await ProjectService.restartProject(proyectIdRegister,localStorage.getItem("userId"));
     if (data) {      
+      getProjects()
       setModalMessage("El proyecto ha sido reiniciado correctamente.");
       handleShow();
     } else {
