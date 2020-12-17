@@ -95,13 +95,15 @@ const deleteCase = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
-const approveProject = async (projectId,userId) => {
+const approveProject = async (req, res) => {
   try {
+    const { id } = req.params
+    const { userId } = req.body
     const decision = "fin"
-    const response = await Bonita.setDecision(projectId,decision);    
+    var response = await Bonita.setDecision(id,decision);    
     if (response) {
-      response = await Bonita.advanceTask(projectId,userId);    
-      return response;
+      response = await Bonita.advanceTask(id,userId);    
+      return res.status(200).json({ status: "Project approved" });
     }
     return res.status(400).json({});
   } catch (e) {

@@ -40,7 +40,7 @@ db.Sequelize = Sequelize;
 db["User"].belongsToMany(db["Role"], { as: "roles", through: "userRoles" });
 db["Role"].belongsToMany(db["User"], { as: "users", through: "userRoles" });
 
-//sequelize.sync({ alter: true });
+//sequelize.sync({ force: true });
 
 db.ROLES = ["user", "admin", "moderator"];
 
