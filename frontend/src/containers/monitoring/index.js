@@ -21,7 +21,6 @@ export default function Monitoring() {
         </a>
         <a href="/projects/monitoring/query4">
           Proyectos que se encuentran en curso y con protocolos atrasados
-          (FALTA)
         </a>
       </div>
     </>

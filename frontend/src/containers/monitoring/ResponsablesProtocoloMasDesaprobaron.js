@@ -12,7 +12,7 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
   const getUsers = async (event) => {
     const { data, status } = await getAll();
     if (data && status === 200) {
-      setUsers(data);
+      setUsers((users) => [...users, data]);
     } else {
       console.log("Error al traer usuarios");
     }
@@ -45,7 +45,7 @@ export default function ResponsablesProtocoloMasDesaprobaron() {
           ...responsibles,
           {
             id: key,
-            name: getUserName(key) ? getUserName(key) : "Cami Faraone",
+            name: getUserName(key) ? getUserName(key) : "Camila Faraone",
             value: result[key],
           },
         ]);
