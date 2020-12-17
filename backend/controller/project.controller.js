@@ -1,6 +1,9 @@
 const { Pool } = require("pg");
 const model = require("../database/models/Index");
 const Bonita = require("./bonita.controller");
+const bonita = require("../model/bonita");
+
+const Protocol = require("./protocol.controller");
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,6 +27,18 @@ const setStatus = async (req, res) => {
     const params = [{ status: "ejecutando" }];
     const project = await model.Project.update(params[0], {
       where: { bonitaIdProject: parentCaseId },
+    });
+    return res.status(200).json({ project });
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+const setStatusIniciado = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const params = [{ status: "iniciado" }];
+    const project = await model.Project.update(params[0], {
+      where: { bonitaIdProject: id },
     });
     return res.status(200).json({ project });
   } catch (error) {
@@ -177,6 +192,61 @@ const deleteProject = async (req, res) => {
   }
 };
 
+
+/**
+ * @fb
+ * @param {*} req
+ * @param {*} res
+ */
+const approveProject = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { userId } = req.body
+    console.log("llego al approve case del bonita controller con "+id)
+    const response = await Bonita.approveProject(id,userId);
+    if (response) {
+      return res.status(200).json({ status: "Project Approved" });
+    }
+    return res.status(400).json({});
+  } catch (e) {
+    return res.status(403);
+  }
+};
+
+/**
+ * @fb
+ * @param {*} req
+ * @param {*} res
+ */
+const restartProject = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { userId } = req.body
+    console.log("llego al restart case del project controller con "+id+"//"+req.body.parentCaseId)
+    var response = await Protocol.restartAllProtocolsByProject(req, res);
+    response = setStatusIniciado(req,res)
+    console.log("salio del restart con-> "+response)
+    if (response) {
+        console.log("entro con esta response al if -> "+response)
+        const decision = "reiniciar"
+        response = await bonita.setDecision(id,decision);
+        console.log("cuando setea la decision response "+response)
+        if (response){
+          const stats = "iniciado"
+          response = await bonita.setStatus(id, stats);
+          console.log("cuando setea el status response "+response)
+          response =  await bonita.advanceTask(id, userId);     
+          console.log("cuando setea el advance task response "+response)
+          return res.status(200).json({ status: "Project Restarted" });     
+        }
+      return res.status(500).json({ status: "Error en restart" });
+    }
+    return res.status(400).json({});
+  } catch (e) {
+    return res.status(403);
+  }
+};
+
 const createBonitaProject = async (req, res) => {
   try {
     const bonita = await Bonita.login();
@@ -200,4 +270,7 @@ module.exports = {
   setStatus,
   updateProjectByCaseId,
   getProjectByBonitaId,
+  approveProject,
+  restartProject,
+  setStatusIniciado
 };

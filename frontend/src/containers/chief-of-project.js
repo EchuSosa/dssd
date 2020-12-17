@@ -11,6 +11,7 @@ export default function ChiefOfProject() {
   const [projects, setProjects] = useState([]);
   const [show, setShow] = useState(false);
   const [showApprove, setShowApprove] = useState(false);
+  const [showRestart, setShowRestart] = useState(false);
   const [proyectIdRegister, setProyectIdRegister] = useState(null);
   const [modalMessage, setModalMessage] = useState("");
   //TODO Verificar si se deshabilita el botón de iniciar una vez que lo iniciamos
@@ -73,13 +74,8 @@ export default function ChiefOfProject() {
   const handleSubmitApprove = async (event) => {
     event.preventDefault();
     setShowApprove(false);
-    const { data } = await ProjectService.getCurrentActivity(proyectIdRegister);
-    if (data[0].displayName === "Registrar resultado") {
-      await ProjectService.assignActivity(
-        proyectIdRegister,
-        localStorage.getItem("userId")
-      );
-      await ProjectService.startActivity(proyectIdRegister);
+    const  data  = await ProjectService.approveProject(proyectIdRegister,localStorage.getItem("userId"));
+    if (data) {      
       setModalMessage("El protocolo ha sido aprobado correctamente.");
       handleShow();
     } else {
@@ -90,7 +86,23 @@ export default function ChiefOfProject() {
     }
   };
 
+  const handleSubmitRestart = async (event) => {
+    event.preventDefault();
+    setShowRestart(false);
+    const  data  = await ProjectService.restartProject(proyectIdRegister,localStorage.getItem("userId"));
+    if (data) {      
+      setModalMessage("El proyecto ha sido reiniciado correctamente.");
+      handleShow();
+    } else {
+      setModalMessage(
+        "Para poder reiniciar un proyecto deben ejecutarse todos los protocolos asociados."
+      );
+      handleShow();
+    }
+  };
+
   const handleShowProtocols = async () => {};
+
 
   const startProject = async (projectId) => {
     const { data } = await ProjectService.getProtocolsByProject(projectId);
@@ -130,8 +142,14 @@ export default function ChiefOfProject() {
   const handleShow = () => setShow(true);
 
   const handleCloseApprove = () => setShowApprove(false);
+  const handleCloseRestart = () => setShowRestart(false);
+
   const handleShowApprove = (projectId) => {
     setShowApprove(true);
+    setProyectIdRegister(projectId);
+  };
+  const handleShowRestart = (projectId) => {
+    setShowRestart(true);
     setProyectIdRegister(projectId);
   };
 
@@ -153,6 +171,24 @@ export default function ChiefOfProject() {
           </Button>
           <Button variant="primary" onClick={handleSubmitApprove}>
             Aprobar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showRestart} onHide={handleCloseRestart}>
+        <Modal.Header closeButton>
+          <Modal.Title>Reiniciar proyecto</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group size="lg" controlId="proyectId">
+            <Form.Label>Id de proyecto: {proyectIdRegister}</Form.Label>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseRestart}>
+            Cancelar
+          </Button>
+          <Button variant="primary" onClick={handleSubmitRestart}>
+            Reiniciar
           </Button>
         </Modal.Footer>
       </Modal>
@@ -256,7 +292,13 @@ export default function ChiefOfProject() {
                           Finalizar Configuracion
                         </Button>
                       ) : (
-                        "Proyecto iniciado"
+                        <Button
+                        variant="info"
+                        size="sm"
+                        onClick={() => handleShowRestart(project.id)}
+                      >
+                        Reiniciar proyecto
+                      </Button>
                       )}
                     </td>
                     <td>

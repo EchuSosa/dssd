@@ -104,6 +104,42 @@ const assignActivity = async (parentCaseId, userId) => {
   return response;
 };
 
+const approveProject = async (parentCaseId, userId) => {
+  console.log("********************entro al servicio de aprobar proyecto********* con"
+  +parentCaseId + "/"+userId
+  )
+  const response = await axios
+    .put(`${API_URL}/projects/${parentCaseId}/approve`, {
+      userId: userId
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  console.log(response)  
+  return response;
+};
+
+const restartProject = async (parentCaseId, userId) => {
+  console.log("********************entro al servicio de aprobar proyecto********* con"
+  +parentCaseId + "/"+userId
+  )
+  const response = await axios
+    .put(`${API_URL}/projects/${parentCaseId}/restart`, {
+      userId: userId
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  console.log(response)  
+  return response;
+};
+
 const createProject = async (name, endDate) => {
   const response = await axios
     .post(`${API_URL}/createNewProject`, {
@@ -197,4 +233,6 @@ export default {
   updateProject,
   getProjectByBonitaId,
   getProjects,
+  approveProject,
+  restartProject
 };

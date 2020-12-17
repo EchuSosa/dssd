@@ -74,6 +74,8 @@ const {
   getProjectsByUserIdAndProjectId,
   updateProjectByCaseId,
   getProjectByBonitaId,
+  approveProject,
+  restartProject
 } = require("../controller/project.controller");
 router.get("/projects/add", (req, res) =>
   res.render("../views/pages/newProject.ejs")
@@ -89,7 +91,8 @@ router.get(
 router.get("/projects/bonita/:id", getProjectByBonitaId);
 router.put("/projects/:id", updateProject);
 router.put("/projects/case/:caseId", updateProjectByCaseId);
-
+router.put("/projects/:id/approve", approveProject);
+router.put("/projects/:id/restart", restartProject);
 router.delete("/projects/:id", deleteProject);
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------

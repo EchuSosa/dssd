@@ -372,6 +372,30 @@ const restartProtocol = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+
+const restartAllProtocolsByProject = async (req, res) => {
+  try {
+    const  projectId  = req.params.id;
+    const { userId } = req.body;
+    console.log("restartAllProtocolsByProject -----------------------_>" + userId+"/"+projectId);
+    var params = [{ score: null, executed: false, started:false }];
+    var protocols = await model.Protocol.update(params[0], {
+      where: { project_id: projectId },
+    });
+    console.log("imprimer estos protos" + protocols);
+    if (protocols) {
+      var updatedProtocols = await model.Protocol.findAll({
+        where: { project_id: projectId },
+      });           
+      console.log("********------- por salir del restartkakakak")
+      return res.status(200).json();
+    }
+    throw new Error("Protocols not found");
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+};
+
 const deleteProtocol = async (req, res) => {
   try {
     const { id } = req.params;
@@ -561,4 +585,5 @@ module.exports = {
   createRemoteProtocol,
   getRemoteValue,
   restartProtocol,
+  restartAllProtocolsByProject
 };

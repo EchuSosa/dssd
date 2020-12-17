@@ -96,6 +96,26 @@ const deleteCase = async (req, res) => {
  * @param {*} req
  * @param {*} res
  */
+const approveProject = async (projectId,userId) => {
+  try {
+    console.log("llego al delete case del bonita controller con "+projectId)
+    const decision = "fin"
+    const response = await Bonita.setDecision(projectId,decision);    
+    if (response) {
+      response = await Bonita.advanceTask(projectId,userId);    
+      return res.status(200).json({ status: "Task advanced" });
+    }
+    return res.status(400).json({});
+  } catch (e) {
+    return res.status(403);
+  }
+};
+
+/**
+ * @fb
+ * @param {*} req
+ * @param {*} res
+ */
 const restartProtocol = async (req, res) => {
   try {
     const { userId } = req.body
@@ -109,6 +129,8 @@ const restartProtocol = async (req, res) => {
     return res.status(403);
   }
 };
+
+
 
 /**
  * @echu
@@ -340,7 +362,8 @@ module.exports = {
   getCurrentActivity,
   assignActivity,
   deleteCase,
-  restartProtocol
+  restartProtocol,
+  approveProject
 };
 
 /*
