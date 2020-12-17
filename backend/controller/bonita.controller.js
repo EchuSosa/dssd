@@ -185,9 +185,14 @@ const getCasesByUser = async (req, res) => {
       }else{
         status = project.status
       }
+      const decision = await Bonita.getDecision(id)
+      console.log("-----------------------------TRAJO ESTA DECISION ----->"+decision)
       console.log("no entro al fin porque encontro proyecto, el estado es"+status)
       response[key]["currentState"] = status;
+      response[key]["currentDecision"] = decision;
       arr.push(response[key])
+
+
     }
     /*
     const projects = await model.Project.findAll({
