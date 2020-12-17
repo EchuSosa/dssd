@@ -148,25 +148,14 @@ const getProtocolsByProject = async (req, res) => {
 
 const executeRemoteProtocol = async (req, res) => {
   try {
-    const { id } = req.params;
-    console.log(
-      "**********************  *******************bonita le pego con este id-> " +
-        id
-    );
-    console.log("paso el atre de bonita");
-    console.log("con esta cosa " + JSON.stringify(req.body));
+    const { id } = req.params;    
     const score = Math.floor(Math.random() * 11);
-    console.log("el score random que trae es " + score);
     const protocol = await model.Protocol.update(
       { endDate: Date.now(), score: score, executed: true },
       { where: { id: id } }
     );
     return res.status(200).json({ protocol });
-    /*
-    const protocol = await model.Protocol.create(req.body);
-    return res.status(201).json({
-      protocol,
-    });*/
+    
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -191,42 +180,28 @@ const getRemoteValue = async (req, res) => {
     var protocol = response.protocol;
     var userId = response.protocol.user_id;
     var projectId = response.protocol.project_id;
-
-    console.log(
-      JSON.stringify("UPDATEO EN HEROKU Y TRAJO-> " + JSON.stringify(protocol))
-    );
+    
     var params = [{ score: protocol.score, executed: true }];
     protocol = await model.Protocol.update(params[0], { where: { id: id } });
-    //ver
-    //return res.status(200).json({ protocol });
+
     if (protocol) {
-      console.log("entro al if porque hay response en el approve");
-      //const protocolos = await getProtocolsByProjectId(projectId)
       //cuento los que faltan
       const cant = await model.Protocol.count({
         where: {
           [Op.and]: [{ project_id: projectId.toString() }, { executed: false }],
         },
       });
+      
 
-      console.log("la cuenta de los que faltan devolvio " + cant);
-
-      if (cant == 0) {
-        console.log("entro al IF porque la cantidad que queda es 0");
-        console.log("el project id y user es:" + projectId + userId);
+      if (cant == 0) {        
         //aca pongo la logica para setear si quedan protos
         const decision = "ultimo";
         await Bonita.setDecision(projectId, decision);
-        console.log("era el ultimo ");
       } else {
-        console.log("entro al porque la cantidad que queda es MAYOR A 0");
-        console.log("el project id y user es:" + projectId + userId);
+        
         await Bonita.assignActivity(projectId, userId);
-        console.log("paso el assign activity llamado del controller");
         const decision = "continuar";
         await Bonita.setDecision(projectId, decision);
-        console.log("paso el set decision llamado del controller");
-        console.log("paso el advance task ");
       }
       return res.status(200).json(response);
     }
@@ -240,12 +215,8 @@ const createProtocol = async (req, res) => {
     if (req.body.isLocal == 1) {
       const protocol = await model.Protocol.create(req.body);
       return res.status(201).json({ protocol });
-    } else {
-      console.log(
-        "entro para pegarle a hrokuuuuuuuuuuuuuuuuuuuuuuuuuu--------------"
-      );
+    } else {      
       var url = heroku + "remote/protocols";
-      console.log("la url es " + url);
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -257,8 +228,6 @@ const createProtocol = async (req, res) => {
         return await res.json();
       });
 
-      console.log("LLEGA--------------------->");
-      console.log(response);
       //creando protocolo en el local
       remoteId = response.protocol.id;
       req.body["remoteId"] = remoteId;
@@ -277,12 +246,7 @@ const createProtocol = async (req, res) => {
         body: JSON.stringify(params[0]),
       }).then(async (res) => {
         return await res.json();
-      });
-      console.log(
-        JSON.stringify(
-          "UPDATEO EN HEROKU Y TRAJO-> " + JSON.stringify(protocol)
-        )
-      );
+      });      
       return res.status(201).json(protocol);
     }
   } catch (error) {
@@ -319,12 +283,10 @@ const restartProtocol = async (req, res) => {
   try {
     const { idProtocol } = req.params;
     const { userId } = req.body;
-    console.log("EL POLEMICO LLEGA CON -----------------------_>" + userId);
     var params = [{ score: null, executed: false }];
     var protocol = await model.Protocol.update(params[0], {
       where: { id: idProtocol },
     });
-    console.log("imprimer este proto" + protocol);
     if (protocol) {
       var updatedProtocol = await model.Protocol.findOne({
         where: { id: idProtocol },
@@ -335,7 +297,6 @@ const restartProtocol = async (req, res) => {
       const lastOrder = await model.Protocol.max("order", {
         where: { project_id: caseId },
       });
-      console.log("el last order es " + lastOrder);
       params = [{ order: parseInt(lastOrder, 10) + 1 }];
       protocol = await model.Protocol.update(params[0], {
         where: { id: idProtocol },
@@ -347,16 +308,10 @@ const restartProtocol = async (req, res) => {
         
         //codigo pa ver que hacemos si el loco quiere resetear un protocolo
         var decision = await Bonita.getDecision(caseId);
-        console.log("pidio la decision y es " + decision);
         if (decision == "ultimo") {
-          await Bonita.reencolar(idProtocol, caseId, userId);
-          console.log(
-            "******************entro al if porque decision era ultimo"
-          );
+          await Bonita.reencolar(idProtocol, caseId, userId);          
           decision = "continuar";
           Bonita.setDecision(caseId, decision);
-          console.log("------------------sera este?-------------");
-          //aca no setea las variables de bonita
           Bonita.advanceTask(caseId, userId);
         }
 
@@ -377,17 +332,14 @@ const restartAllProtocolsByProject = async (req, res) => {
   try {
     const  projectId  = req.params.id;
     const { userId } = req.body;
-    console.log("restartAllProtocolsByProject -----------------------_>" + userId+"/"+projectId);
     var params = [{ score: null, executed: false, started:false }];
     var protocols = await model.Protocol.update(params[0], {
       where: { project_id: projectId },
     });
-    console.log("imprimer estos protos" + protocols);
     if (protocols) {
       var updatedProtocols = await model.Protocol.findAll({
         where: { project_id: projectId },
       });           
-      console.log("********------- por salir del restartkakakak")
       return res.status(200).json();
     }
     throw new Error("Protocols not found");
@@ -440,71 +392,22 @@ const startProtocol = async (req, res) => {
   }
 };
 
-/*const approveProtocol = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const protocol = await model.Protocol.findOne({
-      where: { id: id },
-    });
-
-    if (protocol) {
-      userHasPermissions(res, req, protocol.dataValues.user_id);
-    } else {
-      return res.status(500).send({
-        message: "Protocol not found",
-      });
-    }
-
-    if (protocol.dataValues.startDate === null) {
-      return res.status(400).send({
-        message: "The protocol needs to be start before approve",
-      });
-    }
-
-    protocolIsApproved(res, protocol.dataValues.endDate);
-    const score = req.body.score;
-    if (!(score >= 0 && score <= 10)) {
-      return res.status(400).send({
-        message: "Score must be a value between 0 and 10",
-      });
-    } else {
-      await protocol.update({ endDate: Date.now(), score: req.body.score });
-      return res.status(200).send({
-        message: "Protocol has been approved",
-      });
-    }
-
-    throw new Error("Protocol not found");
-  } catch (error) {
-    return res.status(500).send(error.message);
-  }
-};
-*/
 const getStatus = async (req, res) => {
   const { projectId } = req.body;
-  console.log("entro al getStatus controller con el id " + projectId);
   return await Bonita.getStatus(projectId);
 };
 
 const approveProtocol = async (req, res) => {
   const { id, score, projectId, userId } = req.body;
-  console.log(
-    "lo que llega al controlador de approve es: " + JSON.stringify(req.body)
-  );
+
 
   const response = await model.Protocol.update(
     { endDate: Date.now(), score: score, executed: true },
     { where: { id: id } }
   );
-
-  console.log(
-    "la response en el controlador de proto despues de updatear es" +
-      JSON.stringify(response)
-  );
+  
 
   if (response) {
-    console.log("entro al if porque hay response en el approve");
-    //const protocolos = await getProtocolsByProjectId(projectId)
     //cuento los que faltan
     const cant = await model.Protocol.count({
       where: {
@@ -512,26 +415,17 @@ const approveProtocol = async (req, res) => {
       },
     });
 
-    console.log("la cuenta de los que faltan devolvio " + cant);
 
     if (cant == 0) {
-      console.log("entro al IF porque la cantidad que queda es 0");
-      console.log("el project id y user es:" + projectId + userId);
       //aca pongo la logica para setear si quedan protos
       const decision = "ultimo";
       await Bonita.setDecision(projectId, decision);
       await Bonita.advanceTask(projectId, userId);
-      console.log("era el ultimo ");
     } else {
-      console.log("entro al porque la cantidad que queda es MAYOR A 0");
-      console.log("el project id y user es:" + projectId + userId);
       await Bonita.assignActivity(projectId, userId);
-      console.log("paso el assign activity llamado del controller");
       const decision = "continuar";
       await Bonita.setDecision(projectId, decision);
-      console.log("paso el set decision llamado del controller");
       await Bonita.advanceTask(projectId, userId);
-      console.log("paso el advance task ");
     }
     return res.status(200).json(response);
   }
@@ -561,7 +455,6 @@ const getProtocolsByProjectId = async (req, res) => {
         [Op.and]: [{ project_id: projectId }, { started: false }],
       },
     });
-    console.log(cant);
     return cant;
   } catch (error) {
     return res.status(500).send("catchhhhhhhhhh" + error.message);

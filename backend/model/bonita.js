@@ -186,7 +186,6 @@ class Bonita {
 
   async advanceTask2(parentCaseId) {
     var params = [{ 'state': 'completed' }]
-    console.log(JSON.stringify(params[0]))
     try {
       return await fetch(`${bonita}/API/bpm/humanTask/?f=parentCaseId=${parentCaseId}`, {
         headers: this.headers,
@@ -199,25 +198,9 @@ class Bonita {
 
 
   }
-  /* 
-    async advanceTask(id) {
-      console.log("entro al advance task")
-      const response = await fetch(
-        `${bonita}/API/bpm/userTask/${id}/execution?assign=true`,
-        {
-          method: METHOD.POST,
-          headers: this.headers,
-        }
-      ).then((res) => res.json(response));
-      console.log("hizo la request en el advancetask")
-      return response;
-    }
   
-    http://localhost:8080/API/bpm/activity/
-  */
   async updateTask(id) {
     try {
-      console.log("")
       return await fetch(`${bonita}/API/bpm/activity/${id}`, {
         headers: this.headers,
         method: "PUT",
@@ -305,7 +288,6 @@ class Bonita {
  */
   async getAllUsers(group_id) {
     try {
-      console.log("llego a lo ultimo con" + group_id)
       return await fetch(bonita + '/API/identity/user?p=0&c=5&o=lastname ASC&f=enabled=true&f=group_id=' + group_id,
         { headers: this.headers }).then(res => res.json())
     } catch (e) {
@@ -357,10 +339,8 @@ class Bonita {
  * Obtenemos el id del grupo
  */
   async getCurrentTaskId(parentCaseId) {
-    console.log("emtrpo añ citrre")
     const response = await fetch(bonita + '/API/bpm/humanTask?p=0&c=10&f=parentCaseId=' + parentCaseId,
       { headers: this.headers }).then(res => res.json())
-    console.log(response[0].id)
     return response[0].id;
   }
 
@@ -374,30 +354,22 @@ class Bonita {
 
   async assignActivity(parentCaseId, userId) {
     try {
-      console.log("assign activity del model de bonita con-> " + parentCaseId + "/" + userId)
 
         //------------------Codigo para obtener el siguiente protocolo--------------------
       var response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden', { headers: this.headers }
       ).then((res) => res.json());
-      console.log("la response que trae el current orden es" + response)
       var currentOrder = response.value
       //var currentOrder = 0
-      console.log("el orden actual es: " + currentOrder)
-      console.log("comienza el codigo para obtener el siguiente protocolo ")
       var nextOrder = parseInt(currentOrder, 10) + 1
       var protocol = await model.Protocol.findOne({
         where: { [Op.and]: [{ executed: false }, { project_id: parentCaseId.toString() }, { order: parseInt(nextOrder, 10) }] }
       });
-      console.log("ya le pego al modelo de protocolo")
       if (!protocol) {
-        console.log("entro al if porque no existe el protoloco")
         return res.status(500).json();
       }
-      console.log("no entro al if porque  existe el protocolo " + protocol.id)
       //-------------------------------fin codigo sig prot--------------------------------------------
       //-------------------------------Codigo para setear el primer protocolo en bonita--------------
       var params = [{ 'value': protocol.id, 'type': 'java.lang.Long' }]
-      console.log("seteo estos params para setear la variable id_protocol de bonita-> " + JSON.stringify(params[0]))
       response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/id_protocol',
         {
           method: 'PUT',
@@ -405,7 +377,6 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el id_protocol -> " + response)
       //----------------------------------------fin set primer prot-------------------------------------------
       //-------------------------------Codigo para setear si se ejecuta local en bonita--------------
       if (parseInt(protocol.isLocal, 10) === 0) { //chequear si funciona bien
@@ -414,7 +385,6 @@ class Bonita {
         var tipejec = "true"
       }
       params = [{ 'value': tipejec, 'type': 'java.lang.Boolean' }]
-      console.log("seteo estos params para el tipo de ejecuccion en bonita-> " + JSON.stringify(params[0]))
       response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/local',
         {
           method: 'PUT',
@@ -422,11 +392,9 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el tipo de ejecuccion -> " + response)
       //----------------------------------------fin setear tip ejecc-------------------------------------------
       //-------------------------------Codigo para setear el orden de ejec en bonita--------------
       params = [{ 'value': protocol.order, 'type': 'java.lang.Long' }]
-      console.log("seteo estos params para el orden de ejecuccion en bonita-> " + JSON.stringify(params[0]))
       response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden',
         {
           method: 'PUT',
@@ -434,16 +402,10 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el orden de ejecuccion -> " + response)
       //----------------------------------------fin setear ord ejecc-------------------------------------------
       //--------------------------------------codigo para cambiar estado protocolo a active---------------------
-      console.log("comienza el codigo para cambiarle el estado a started")
       params = [{ 'started': 'true' }]
-      console.log("con estas vars-> " + JSON.stringify(params[0]) + " mas este id " + protocol.id)
-      /*
-      const [updated] = await model.Protocol.update(params, {
-        where: { id: protocol.id },
-      });*/
+      
 
       var updated = model.Protocol.update(
         { started: true },
@@ -453,33 +415,14 @@ class Bonita {
       if (!updated) {
         console.log("entro al if porque no updateo" + updated)
         return updated;
-      };
-      console.log("no entro al if porque updateo y sale del assign")
-      //---------------------------------------------------------------------------------------------------------  
-      /*
-      console.log("por pegarle al fetch de la current task")
-      var currentTask = await fetch(bonita + '/API/bpm/humanTask?p=0&c=10&f=parentCaseId=' + parentCaseId, { headers: this.headers }
-      ).then(res => res.json());
-      console.log("la current task es: " + currentTask[0].id)
-      
-      params = [{ 'assigned_id': userId }]
-      response = await fetch(bonita + '/API/bpm/humanTask/' + currentTask[0].id,
-        {
-          method: 'PUT',
-          headers: this.headers,
-          body: JSON.stringify(params[0])
-        }
-      ).then();
-      console.log("la resp es" + response)*/
+      };      
       return updated;
     } catch (e) { console.log(e) }
 
 
   }
   async setDecision(parentCaseId, decision) {
-    console.log("entro al set decision con->" + parentCaseId + "/" + decision)
     var params = [{ 'value': decision.toString(), 'type': 'java.lang.String' }]
-    console.log("setea estos params para la decision-> " + JSON.stringify(params[0]))
     const response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/decision',
       {
         method: 'PUT',
@@ -487,13 +430,10 @@ class Bonita {
         body: JSON.stringify(params[0])
       }
     ).then();
-    console.log("paso la request para setear la decision -> " + response)
     return response;
   }
   async setOrder(parentCaseId, orden) {
-    console.log("-----------------------entro al set order con->" + parentCaseId + "/" + orden)
     var params = [{ 'value': orden.toString(), 'type': 'java.lang.Long' }]
-    console.log("setea estos params para la decision-> " + JSON.stringify(params[0]))
     const response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/currentOrden',
       {
         method: 'PUT',
@@ -501,17 +441,13 @@ class Bonita {
         body: JSON.stringify(params[0])
       }
     ).then();
-    console.log("paso la request para setear el orden -> " + response)
     return response;
   }
 
   async getDecision(parentCaseId) {
-    console.log("entro al model bonita get decision con->" + parentCaseId)
     var response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/decision', { headers: this.headers }
     ).then((res) => res.json());
-    console.log("la response que trae el status  es" + response)
     if (response) {
-      console.log("entro al if del get decision porque hay response")
       return response.value
     } else {
       console.log("noooo entro al if del get decision porque no hay response")
@@ -520,9 +456,7 @@ class Bonita {
 
   }
   async setStatus(parentCaseId, estado) {
-    console.log("entro al set estado con->" + parentCaseId + "/" + estado)
     var params = [{ 'value': estado.toString(), 'type': 'java.lang.String' }]
-    console.log("setea estos params para el estado-> " + JSON.stringify(params[0]))
     const response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/estado',
       {
         method: 'PUT',
@@ -530,7 +464,6 @@ class Bonita {
         body: JSON.stringify(params[0])
       }
     ).then();
-    console.log("paso la request para setear el estatus -> " + response)
     return response;
   }
 
@@ -541,17 +474,13 @@ class Bonita {
         headers: this.headers
       }
     ).then();
-    console.log("paso la request para ELIMINAR EL CASO-> " + response)
     return response;
   }
 
   async getStatus(parentCaseId) {
-    console.log("entro al model bonita get decision con->" + parentCaseId)
     var response = await fetch(bonita + '/API/bpm/caseVariable/' + parentCaseId + '/estado', { headers: this.headers }
     ).then((res) => res.json());
-    console.log("la response que trae el status  es" + response)
     if (response) {
-      console.log("entro al if del get decision porque hay response")
       return response.value
     } else {
       console.log("noooo entro al if del get decision porque no hay response")
@@ -562,11 +491,9 @@ class Bonita {
 
   async advanceTask(parentCaseId, userId) {
     try {
-      console.log("entro al advabnced con" + parentCaseId + "/" + userId)
       const currentTask = await fetch(bonita + '/API/bpm/humanTask?p=0&c=10&f=parentCaseId=' + parentCaseId, { headers: this.headers }
       ).then((res) => res.json());
       var params = [{ 'assigned_id': userId, 'state': 'completed' }]
-      console.log("LA CURRENT TASK QUE TRAE EN EL ADVANCED ES " + JSON.stringify(currentTask))
       const response = await fetch(bonita + '/API/bpm/humanTask/' + currentTask[0].id,
         {
           method: 'PUT',
@@ -586,13 +513,9 @@ class Bonita {
         where: { id: idProtocol },
       });
       if(updatedProtocol){
-        //-------------------------------------------MAMBO PARA ASIGNAR VARIABLES DE BONITA----------------------------------------------- 
-      console.log("--------------------********************************------------------")
-      console.log()
-      console.log()
+       
       //-------------------------------Codigo para setear el primer protocolo en bonita--------------
       var params = [{ 'value': idProtocol, 'type': 'java.lang.Long' }]
-      console.log("seteo estos params para setear la variable id_protocol de REENCOLAR-> " + JSON.stringify(params[0]))
       var response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/id_protocol',
         {
           method: 'PUT',
@@ -600,19 +523,14 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el id_protocol -> " + response)
       //----------------------------------------fin set primer prot-------------------------------------------
       //-------------------------------Codigo para setear si se ejecuta local en bonita--------------
       if (updatedProtocol.isLocal == 0) { //chequear si funciona bien.
-        console.log("-----------------------ENTRO AL TRUEEEEE es 0")
         var tipejec = "false"
       } else {
         var tipejec = "true"
-        console.log("-----------------------ENTRO AL FALSE es 1")
-
       }
       params = [{ 'value': tipejec, 'type': 'java.lang.Boolean' }]
-      console.log("seteo estos params para el tipo de ejecuccion en bonita-> " + JSON.stringify(params[0]))
       response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/local',
         {
           method: 'PUT',
@@ -620,11 +538,9 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el tipo de ejecuccion -> " + response)
       //----------------------------------------fin setear tip ejecc-------------------------------------------
       //-------------------------------Codigo para setear el orden de ejec en bonita--------------
       params = [{ 'value': updatedProtocol.order, 'type': 'java.lang.Long' }]
-      console.log("seteo estos params para el orden de ejecuccion en bonita-> " + JSON.stringify(params[0]))
       response = await fetch(bonita + '/API/bpm/caseVariable/' + caseId + '/currentOrden',
         {
           method: 'PUT',
@@ -632,12 +548,9 @@ class Bonita {
           body: JSON.stringify(params[0])
         }
       ).then();
-      console.log("paso la request para setear el orden de ejecuccion -> " + response)
       //----------------------------------------fin setear ord ejecc-------------------------------------------
       //--------------------------------------codigo para cambiar estado protocolo a active---------------------
-      console.log("comienza el codigo para cambiarle el estado a started")
       params = [{ 'started': 'true' }]
-      console.log("con estas vars-> " + JSON.stringify(params[0]) + " mas este id " + idProtocol)
       var updated = model.Protocol.update(
         { started: true },
         { where: { id: idProtocol } }
@@ -649,14 +562,10 @@ class Bonita {
         console.log()
         console.log()
         return updated;
-      };
-      console.log("no entro al if porque updateo y sale del assign")
-      console.log("--------------------*************FINISH*******************------------------")
-      console.log()
-      console.log()
+      };      
       return updated;
-      //---------------
-      }else{
+
+    }else{
         return false;
       }
       

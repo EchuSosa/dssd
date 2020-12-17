@@ -104,11 +104,8 @@ const assignActivity = async (parentCaseId, userId) => {
   return response;
 };
 
-const approveProject = async (parentCaseId, userId) => {
-  console.log("********************entro al servicio de aprobar proyecto********* con"
-  +parentCaseId + "/"+userId
-  )
-  const response = await axios
+const approveProject = async (parentCaseId, userId) => { 
+    const response = await axios
     .put(`${API_URL}/projects/${parentCaseId}/approve`, {
       userId: userId
     })
@@ -118,15 +115,11 @@ const approveProject = async (parentCaseId, userId) => {
     .catch((error) => {
       console.log(error);
     });
-  console.log(response)  
   return response;
 };
 
 const restartProject = async (parentCaseId, userId) => {
-  console.log("********************entro al servicio de aprobar proyecto********* con"
-  +parentCaseId + "/"+userId
-  )
-  const response = await axios
+    const response = await axios
     .put(`${API_URL}/projects/${parentCaseId}/restart`, {
       userId: userId
     })
@@ -136,7 +129,6 @@ const restartProject = async (parentCaseId, userId) => {
     .catch((error) => {
       console.log(error);
     });
-  console.log(response)  
   return response;
 };
 

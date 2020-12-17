@@ -99,7 +99,6 @@ const getStartedProjects = async (req, res) => {
 
 const getProjectsByUserId = async (req, res) => {
   try {
-    console.log("controlador get by id");
     const { idUser } = req.params;
     const project = await model.Project.findAll({
       where: { user_id: idUser },
@@ -202,7 +201,6 @@ const approveProject = async (req, res) => {
   try {
     const { id } = req.params
     const { userId } = req.body
-    console.log("llego al approve case del bonita controller con "+id)
     const response = await Bonita.approveProject(id,userId);
     if (response) {
       return res.status(200).json({ status: "Project Approved" });
@@ -222,31 +220,22 @@ const restartProject = async (req, res) => {
   try {
     const { id } = req.params
     const { userId } = req.body
-    console.log("llego al restart case del project controller con "+id+"//"+userId)
     var response = await Protocol.restartAllProtocolsByProject(req, res);
-    console.log("salio del restart con-> "+response)
     await setStatusIniciado(req,res)
-    console.log("sadsd")
     //-------------------------------Codigo para setear el orden de ejec en bonita--------------
     var minOrder = await model.Protocol.min("order", {
         where: { project_id: id },
       });
     minOrder = minOrder-1
-    console.log("***********************seteo estos params para el orden de ejecuccion en bonita RESTART PROOOOO-> " + minOrder)
     const response2 = await bonita.setOrder(id, minOrder)
-    console.log("******************paso la request para setear el orden de ejecuccion RESTART PROOOOO-> " + response2)
 
     if (response2) {
-        console.log("entro con esta response al if -> "+response2)
         const decision = "reiniciar"
         response = await bonita.setDecision(id,decision);
-        console.log("cuando setea la decision response "+response)
         if (response){
           const stats = "iniciado"
           response = await bonita.setStatus(id, stats);
-          console.log("cuando setea el status response "+response)
           response =  await bonita.advanceTask(id, userId);     
-          console.log("cuando setea el advance task response "+response)
           return res.status(200).json({ status: "Project Restarted" });     
         }
       return res.status(500).json({ status: "Error en restart" });
@@ -260,7 +249,6 @@ const restartProject = async (req, res) => {
 const createBonitaProject = async (req, res) => {
   try {
     const bonita = await Bonita.login();
-    console.log(await bonita.token);
     return bonita;
   } catch (e) {
     return "Error en create bonita project -> " + e;

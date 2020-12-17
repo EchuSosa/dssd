@@ -24,18 +24,7 @@ export default function ProyectosEnCursoConProtocolosAtrasados() {
         let overdue = data.protocol.filter(
           (protocol) =>
             protocol.score === null &&
-            formatDate(new Date().toISOString()) > formatDate(protocol.endDate)
-          /*(protocol) =>
-            console.log(
-              "proyecto",
-              element.bonitaIdProject,
-              "null",
-              protocol.score === null,
-              "hoy",
-              formatDate(new Date().toISOString()),
-              "fecha",
-              formatDate(protocol.endDate)
-            )*/
+            formatDate(new Date().toISOString()) > formatDate(protocol.endDate)          
         );
 
         if (overdue.length > 0) {

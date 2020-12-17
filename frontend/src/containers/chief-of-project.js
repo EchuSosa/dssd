@@ -88,6 +88,7 @@ export default function ChiefOfProject() {
       );
       handleShow();
     }
+    
   };
 
   const handleSubmitRestart = async (event) => {
