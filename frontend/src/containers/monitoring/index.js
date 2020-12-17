@@ -17,11 +17,10 @@ export default function Monitoring() {
           aprobados
         </a>
         <a href="/projects/monitoring/query3">
-          Responsables de protocolos que más desaprobaron (FALTA)
+          Responsables de protocolos que más desaprobaron
         </a>
         <a href="/projects/monitoring/query4">
           Proyectos que se encuentran en curso y con protocolos atrasados
-          (FALTA)
         </a>
       </div>
     </>
