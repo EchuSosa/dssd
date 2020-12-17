@@ -201,11 +201,16 @@ const approveProject = async (req, res) => {
   try {
     const { id } = req.params
     const { userId } = req.body
-    const response = await Bonita.approveProject(id,userId);
+    var params = [{"status": "completed" }]
+    const updated = await model.Project.update(params[0], {
+      where: { bonitaIdProject: id.toString() },
+    });
+    console.log("paso el update del model project con"+updated)
+    const response = await Bonita.approveProject(req, res);
     if (response) {
-      return res.status(200).json({ status: "Project Approved" });
+      return res.status(200);
     }
-    return res.status(400).json({});
+    return res.status(400);
   } catch (e) {
     return res.status(403);
   }
